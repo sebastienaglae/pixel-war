@@ -20,7 +20,7 @@ export const ThemeContext = createContext({
 function App() {
   return (
     <Routes>
-      <Route path='/' element={<Layout />}>
+      <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path='/test' element={<TestPage />} />
         <Route path='/admin/create-board' element={<CreateBoardPage />} />

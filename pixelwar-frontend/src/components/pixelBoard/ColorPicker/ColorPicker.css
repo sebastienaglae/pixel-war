@@ -1,0 +1,8 @@
+.palette {
+  width: 100%;
+  background-color: rgb(254, 237, 208);
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
