@@ -2,8 +2,22 @@ import { Routes, Route, Link } from "react-router-dom";
 import HomePage from "@pages/HomePage";
 import TestPage from "@pages/TestPage";
 import { Outlet } from "react-router-dom";
+import { socket } from "./socket";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    socket.on("connect", () => {
+      socket.on("welcome", (data) => {
+        console.log("msg from server", data);
+      });
+
+      return () => {
+        socket.off("connect");
+      };
+    });
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
