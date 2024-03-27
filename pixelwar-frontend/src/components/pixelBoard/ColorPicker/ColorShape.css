@@ -1,0 +1,20 @@
+.shape {
+  width: 32px;
+  height: 32px;
+}
+
+.shape:hover {
+  border: solid 2px white;
+}
+
+.selected {
+  border: solid 4px white;
+}
+
+.selected:hover {
+  border: solid 4px white;
+}
+
+.shape:active {
+  border: solid 6px white;
+}
