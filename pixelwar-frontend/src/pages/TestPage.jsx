@@ -1,7 +1,20 @@
 import { Button } from "reactstrap";
-import PixelBoardComponent from "@components/pixelBoard/PixelBoardComponent.jsx";
+import SelectComponent from "@components/select/SelectComponent.jsx";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 
 function TestPage() {
+  const [boardId, setBoardId] = useState(null);
+
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
+  // useEffect to observe changes in boardId and navigate to BoardPage when boardId is not null
+  useEffect(() => {
+    if (boardId) {
+      navigate(`/board/${boardId}`); // Navigate to BoardPage with the retrieved boardId
+    }
+  }, [boardId, navigate]); // Trigger effect when boardId or navigate changes
+
   return (
     <div style={{ width: "100%", height: "92%" }}>
       <div style={{ width: "100%", height: "15%" }}>
@@ -9,7 +22,11 @@ function TestPage() {
         <Button color="primary">Primary</Button>
       </div>
       <div style={{ width: "100%", height: "85%" }}>
-        <PixelBoardComponent />
+        {!boardId ? (
+          <SelectComponent setter={setBoardId} />
+        ) : (
+          <p>{"No board :("}</p>
+        )}
       </div>
     </div>
   );
