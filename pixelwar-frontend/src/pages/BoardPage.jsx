@@ -7,7 +7,7 @@ function BoardPage() {
   return (
     <div style={{ width: "100%", height: "92%" }}>
       <div style={{ width: "100%", height: "15%" }}>
-        <h1>Test Page</h1>
+        <h1>Board Page</h1>
         <Button color="primary">Primary</Button>
       </div>
       <div style={{ width: "100%", height: "85%" }}>
