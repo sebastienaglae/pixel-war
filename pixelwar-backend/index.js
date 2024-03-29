@@ -139,13 +139,33 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-  console.log(`User connected ${socket.id}`);
+  console.log(`User ${socket.id} connected`);
 
-  socket.on("setPixelColor", (data) => {
-    //let id = data.id;
-    console.log("data from client", data);
-    //io.to(id).emit("pixel-updated", data);
-    io.emit("pixel-updated", data);
+  // Function to handle joining a board room
+  const joinBoardRoom = (boardId) => {
+    // Leave all rooms the socket is currently in
+    Array.from(socket.rooms).forEach((room) => {
+      if (room !== boardId && room !== socket.id) {
+        socket.leave(room);
+        console.log(`User ${socket.id} left room ${room}`);
+      }
+    });
+
+    // Join the new board room
+    socket.join(boardId);
+    console.log(`User ${socket.id} joined board ${boardId}`);
+  };
+
+  // Event listener for joining a board room
+  socket.on("joinBoard", joinBoardRoom);
+
+  socket.on("leaveRoom", (boardId) => {
+    socket.leave(boardId);
+    console.log("User " + socket.id + " leaved.");
+  });
+
+  socket.on("setPixelColor", (boardId, data) => {
+    io.to(boardId).emit("pixel-updated", data);
   });
 });
 
