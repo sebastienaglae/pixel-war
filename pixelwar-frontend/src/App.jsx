@@ -20,10 +20,6 @@ export const ThemeContext = createContext({
 function App() {
   useEffect(() => {
     socket.on("connect", () => {
-      socket.on("welcome", (data) => {
-        console.log("msg from server", data);
-      });
-
       return () => {
         socket.off("connect");
       };
