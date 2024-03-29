@@ -22,14 +22,11 @@ function PixelBoardComponent(props) {
       });
   }, [id]); // Trigger fetch when ID changes
 
-  const width = boardData ? boardData.width : 3;
-  const height = boardData ? boardData.height : 3;
-
-  return (
+  return boardData ? (
     <div className="pixelBoard">
       <div className="windows">
         <div className="gridNav">
-          <Grid width={width} height={height} selectedColor={selectedColor} />
+          <Grid boardData={boardData} selectedColor={selectedColor} />
         </div>
         <div className="stats">
           <StatsNav />
@@ -39,6 +36,10 @@ function PixelBoardComponent(props) {
         <ColorPicker picked={selectedColor} setPicked={setSelectedColor} />
       </div>
     </div>
+  ) : (
+    <>
+      <p> There is nothing </p>
+    </>
   );
 }
 
