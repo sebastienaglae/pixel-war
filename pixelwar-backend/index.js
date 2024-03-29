@@ -57,7 +57,7 @@ app.post("/create-pixelboard", (req, res) => {
   ) {
     return res.status(400).json({ error: "Missing required fields" });
   }
-
+  console.log(overwrite);
   let newBoard = generateBoard(width, height);
   // Create new pixel board object
   const newPixelBoard = {
@@ -66,11 +66,12 @@ app.post("/create-pixelboard", (req, res) => {
     width: parseInt(width),
     height: parseInt(height),
     author,
-    overwrite: overwrite === "on" ? true : false,
+    overwrite: overwrite,
     reinsert_delay: parseInt(reinsert_delay),
     duration: parseInt(duration),
     creation_date,
     board_history: newBoard,
+    contributors: [],
   };
 
   // Add the new pixel board to the array
@@ -103,6 +104,20 @@ app.put("/update-pixel", (req, res) => {
   pixel.color = color;
   pixel.lastSetter = author;
   pixel.lastUpdate = new Date().toISOString();
+
+  let contributor = pixelBoard.contributors.find(
+    (contrib) => contrib.author === author
+  );
+
+  if (contributor) {
+    contributor.author = author;
+    contributor.lastUpdate = new Date().toISOString();
+  } else {
+    pixelBoard.contributors.push({
+      author: author,
+      lastUpdate: new Date().toISOString(),
+    });
+  }
 
   res.status(200).json({ message: "Pixel updated successfully", pixel });
 });

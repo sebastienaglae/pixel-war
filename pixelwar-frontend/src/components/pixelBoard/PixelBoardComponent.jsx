@@ -11,38 +11,59 @@ function PixelBoardComponent(props) {
   const { id } = props;
   const [selectedColor, setSelectedColor] = useState("#131313");
   const [boardData, setBoardData] = useState(null);
-
+  const [lastUpdate, setLastUpdate] = useState(null);
+  const currAuthor = "visiteur_" + socket.id; // TODO: here set a way to retrieve username
   const history = useNavigate();
 
   useEffect(() => {
     return () => {
       socket.emit("leaveRoom", id);
     };
-  }, [history]);
+  }, [history, id]);
 
   useEffect(() => {
     // Fetch board data by ID
-    if (!boardData) {
+    axios
+      .get(`http://localhost:3001/get-board/${id}`)
+      .then((response) => {
+        setBoardData(response.data.board);
+      })
+      .catch((error) => {
+        console.error("Error fetching board data:", error);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    if (boardData) socket.emit("joinBoard", boardData.id);
+    if (socket.id) {
+      // dont register visiteur_undefined
       axios
         .get(`http://localhost:3001/get-board/${id}`)
         .then((response) => {
-          setBoardData(response.data.board);
+          const contributor = response.data.board.contributors.find(
+            (c) => c.author === currAuthor
+          );
+          if (contributor) {
+            setLastUpdate(contributor.lastUpdate ?? null);
+          }
         })
         .catch((error) => {
           console.error("Error fetching board data:", error);
         });
     }
-  }, [id]); // Trigger fetch when ID changes
-
-  useEffect(() => {
-    if (boardData) socket.emit("joinBoard", boardData.id);
-  }, [boardData]);
+  }, [boardData, currAuthor, id]);
 
   return boardData ? (
     <div className="pixelBoard">
       <div className="windows">
         <div className="gridNav">
-          <Grid boardData={boardData} selectedColor={selectedColor} />
+          <Grid
+            boardData={boardData}
+            selectedColor={selectedColor}
+            lastUpdate={lastUpdate}
+            setLastUpdate={setLastUpdate}
+            currAuthor={currAuthor}
+          />
         </div>
         <div className="stats">
           <StatsNav />
@@ -54,7 +75,7 @@ function PixelBoardComponent(props) {
     </div>
   ) : (
     <>
-      <p> There is nothing </p>
+      <p> There is nothing to paint on {"😞"} ... </p>
     </>
   );
 }
