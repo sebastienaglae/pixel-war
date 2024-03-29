@@ -3,7 +3,6 @@ import "./StatsNav.css";
 
 function StatsNav() {
   const [statToggle, setStatToggle] = useState(false);
-  console.log(statToggle);
   return !statToggle ? (
     <div className="statsNav" onClick={() => setStatToggle(true)}>
       {"<<"}

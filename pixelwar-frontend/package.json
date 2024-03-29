@@ -16,7 +16,11 @@
 =======
     "axios": "^1.6.8",
     "bootstrap": "^5.3.2",
+<<<<<<< HEAD
 >>>>>>> e0bf8ec (feat(front, api): adding endpoints to create and access a specific pixelboard)
+=======
+    "date-fns": "^3.6.0",
+>>>>>>> cbd4126 (fix(front, api): bug on param overwrite, fixed)
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
 <<<<<<< HEAD
