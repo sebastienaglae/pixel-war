@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import "./Pixel.css";
 import { socket } from "../../../socket";
+import axios from "axios";
 
 function Pixel(props) {
-  const { x, y, selectedColor } = props;
-  const [pixelColor, setPixelColor] = useState("#fff"); // white
+  const { x, y, boardData, selectedColor } = props;
+  const [pixelColor, setPixelColor] = useState(
+    boardData.board_history[y][x].color ?? "#fff"
+  ); // white
   const [isHover, setIsHover] = useState(false);
 
   function update(data) {
@@ -14,12 +17,25 @@ function Pixel(props) {
   }
 
   useEffect(() => {
-    socket.on("pixel-updated", update);
+    axios
+      .put(`http://localhost:3001/update-pixel`, {
+        boardId: boardData.id,
+        x: x,
+        y: y,
+        color: pixelColor,
+        author: boardData.author,
+      })
+      .then((response) => {
+        socket.on("pixel-updated", update);
 
-    return () => {
-      socket.off("pixel-updated", update);
-    };
-  }, []);
+        return () => {
+          socket.off("pixel-updated", update);
+        };
+      }, [])
+      .catch((error) => {
+        console.error("Error editing board" + boardData.id + "data:", error);
+      });
+  });
 
   return (
     <div
