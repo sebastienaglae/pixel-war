@@ -1,10 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 import React, { Component } from 'react';
-import './App.css'
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import Routes
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink, Button, Collapse } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import Login from './Login.jsx';
+import Signup from './Signup.jsx';
 
 class App extends Component {
   constructor(props) {
@@ -39,12 +40,16 @@ class App extends Component {
               <Nav navbar>
                 <NavItem>
                   <NavLink href="/login">
-                    <Button color="primary">Login / Signin</Button>
+                    <Button color="primary">Login</Button>
                   </NavLink>
                 </NavItem>
               </Nav>
             </Collapse>
           </Navbar>
+          <Routes> {/* Use <Routes> instead of <Switch> */}
+            <Route path="/login" element={<Login />} /> {/* Use 'element' prop instead of 'component' */}
+            <Route path="/signup" element={<Signup />} />
+          </Routes>
         </div>
       </Router>
     );
