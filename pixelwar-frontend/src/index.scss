@@ -1,0 +1,84 @@
+$white: #ffffff;
+
+$theme-colors: (
+  "light": #ede0c4,
+  "dark": #131f23,
+  "primary": #ff4500,
+  "secondary": #1870f4,
+  "info": #26953d,
+  "success": #179c41,
+  "warning": #ecc419,
+  "danger": #ee0b38,
+);
+
+$body-bg: #0b1416;
+$body-color: white;
+
+$btn-color: white;
+
+$pagination-disabled-bg: #1a282d;
+$pagination-active-bg: #ff4500;
+$pagination-bg: #ff4500;
+$pagination-color: white;
+$dropdown-border-color: #ff4500;
+$dropdown-link-active-color: #ff4500;
+$dropdown-link-active-bg: #1a282d;
+$dropdown-link-hover-bg: #1a282d;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+@each $color, $value in $theme-colors {
+  .btn-#{$color} {
+    color: $white !important;
+  }
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('./assets/fonts/Gotham-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('./assets/fonts/Gotham-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('./assets/fonts/Gotham-BookItalic.otf') format('opentype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  src: url('./assets/fonts/Gotham-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Gotham', sans-serif;
+}
+
+.react-datetime-picker__button__icon {
+  stroke: #ff4500 !important;
+}
+
+.react-datetime-picker{
+  border: 1px solid white !important;
+  border-radius: 5px;
+}
+
+.react-calendar {
+  border-radius: 5px;
+  border: 1px solid #ff4500 !important;
+}
+
+.react-calendar__tile--active {
+  background: #ff4500 !important;
+}
