@@ -1,13 +1,10 @@
 import React from "react";
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from "reactstrap";
-import { FaHome, FaRedditAlien, FaSignInAlt } from "react-icons/fa";
+import { FaHome, FaRedditAlien, FaSignInAlt, FaHammer } from "react-icons/fa";
 
 const Header = () => {
   return (
-    <Navbar
-      expand='md'
-      style={{ backgroundColor: "#FF5700" }}
-    >
+    <Navbar expand='md' color='primary'>
       <NavbarBrand href='/' style={{ color: "white", fontWeight: "bold" }}>
         <FaRedditAlien style={{ marginRight: "10px" }} />
         Reddot
@@ -16,6 +13,11 @@ const Header = () => {
         <NavItem>
           <NavLink href='/' style={{ color: "white" }}>
             <FaHome style={{ marginRight: "5px" }} /> Home
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink href='/admin' style={{ color: "white" }}>
+            <FaHammer style={{ marginRight: "5px" }} /> Admin
           </NavLink>
         </NavItem>
         <NavItem>
