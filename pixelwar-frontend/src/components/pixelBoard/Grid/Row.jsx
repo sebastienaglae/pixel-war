@@ -2,8 +2,15 @@ import Pixel from "./Pixel";
 import "./Row.css";
 
 function Row(props) {
-  const { y, boardData, selectedColor, lastUpdate, setLastUpdate, currAuthor } =
-    props;
+  const {
+    y,
+    boardData,
+    selectedColor,
+    lastUpdate,
+    setLastUpdate,
+    currAuthor,
+    setLogs,
+  } = props;
   let pixels = [];
   for (let i = 0; i < boardData.width; i++) {
     pixels.push(
@@ -16,6 +23,7 @@ function Row(props) {
         lastUpdate={lastUpdate}
         setLastUpdate={setLastUpdate}
         currAuthor={currAuthor}
+        setLogs={setLogs}
       />
     );
   }

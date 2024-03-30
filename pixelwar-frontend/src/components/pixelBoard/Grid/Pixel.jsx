@@ -13,6 +13,7 @@ function Pixel(props) {
     lastUpdate,
     setLastUpdate,
     currAuthor,
+    setLogs,
   } = props;
   const [pixelColor, setPixelColor] = useState(
     boardData.board_history[y][x].color ?? "#fff"
@@ -74,8 +75,9 @@ function Pixel(props) {
             author: currAuthor,
           })
           .then((response) => {
+            const lastUpdateVal = new Date().toISOString();
             boardData.board_history[y][x].lastSetter = currAuthor;
-            setLastUpdate(new Date().toISOString()); // last update on the board for the user
+            setLastUpdate(lastUpdateVal); // last update on the board for the user
             socket.emit("setPixelColor", boardData.id, {
               x: x,
               y: y,
@@ -83,6 +85,16 @@ function Pixel(props) {
               author: currAuthor,
             });
             console.log("Pixel color updated on server", response);
+            const payload = {
+              boardId: boardData.id,
+              author: currAuthor,
+              x: x,
+              y: y,
+              color: selectedColor,
+              lastUpdate: lastUpdateVal,
+            };
+            setLogs(payload);
+            socket.emit("add-log", payload);
           })
           .catch((error) => {
             console.error("Error editing board data:", error);
