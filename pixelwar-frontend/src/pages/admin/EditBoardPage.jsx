@@ -22,8 +22,8 @@ function EditBoardPage({ boardId }) {
   };
 
   return (
-    <div>
-      <h2>Éditer PixelBoard</h2>
+    <div className='mt-5'>
+      <h2 className='text-center mb-5'>Éditer PixelBoard</h2>
       {initialData && (
         <PixelBoardForm initialData={initialData} onSubmit={handleSubmit} />
       )}

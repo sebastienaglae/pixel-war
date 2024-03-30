@@ -99,6 +99,7 @@ function PixelBoardForm({ initialData = {}, onSubmit }) {
             </FormGroup>
             <FormGroup>
               <Label>Date de création</Label>
+              <br />
               <DateTimePicker
                 onChange={(date) => handleDateChange("creationDate", date)}
                 value={pixelBoard.creationDate}
@@ -107,13 +108,16 @@ function PixelBoardForm({ initialData = {}, onSubmit }) {
             </FormGroup>
             <FormGroup>
               <Label>Date de fin</Label>
+              <br />
               <DateTimePicker
                 onChange={(date) => handleDateChange("endDate", date)}
                 value={pixelBoard.endDate}
                 required
               />
             </FormGroup>
-            <Button type='submit'>Soumettre</Button>
+            <Button color='primary' type='submit'>
+              Soumettre
+            </Button>
           </Form>
         </Col>
       </Row>

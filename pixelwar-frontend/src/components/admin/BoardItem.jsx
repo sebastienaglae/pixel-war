@@ -12,7 +12,7 @@ function BoardItem({ data }) {
 
   const handleEdit = () => {
     console.log("Edit action");
-    navigate(`/admin/edit/${data.id}`);
+    navigate(`/admin/edit-board/${data.id}`);
   };
 
   const handleDelete = () => {
