@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import PixelBoardForm from "@components/common/PixelBoardForm";
+import PixelBoardForm from "@components/admin/PixelBoardForm";
 
 function EditBoardPage({ boardId }) {
   const [initialData, setInitialData] = useState(null);

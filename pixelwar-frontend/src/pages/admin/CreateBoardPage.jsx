@@ -1,5 +1,5 @@
 import React from "react";
-import PixelBoardForm from "@components/common/PixelBoardForm";
+import PixelBoardForm from "@components/admin/PixelBoardForm";
 
 function CreateBoardPage() {
   const handleSubmit = (formData) => {
