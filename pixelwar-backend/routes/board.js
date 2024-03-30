@@ -27,6 +27,25 @@ const createBoardValidator = [
             throw new Error('Resolution y must be less than 1000');
         }
         return true;
+    }),
+    validator.body('colors', 'Colors is required').isArray().custom((value, { req }) => {
+        if (value.length < 1) {
+            throw new Error('Colors must have at least one color');
+        }
+        return true;
+    }),
+    validator.body('colors.*', 'Color is required').isString().custom((value, { req }) => {
+        if (!/^#[0-9A-F]{6}$/i.test(value)) {
+            throw new Error('Invalid color');
+        }
+        return true;
+    }),
+    // max colors is 15, as the first color is transparent
+    validator.body('colors', 'Colors must have at most 15 colors').custom((value, { req }) => {
+        if (value.length > 15) {
+            throw new Error('Colors must have at most 15 colors');
+        }
+        return true;
     })
 ];
 const updateBoardValidator = [
@@ -63,7 +82,11 @@ const renderInfo = (id, res) => {
                 startAt: board.startAt,
                 endAt: board.endAt,
                 resolution: board.resolution,
-                owner: board.owner
+                owner: board.owner,
+                colors: [
+                    "#000000",
+                    ...board.colors
+                ]
             });
         })
         .catch(err => {
@@ -74,19 +97,19 @@ const renderInfo = (id, res) => {
 const router = express.Router();
 
 router.get('/:id', function(req, res, next) {
-
+    renderInfo(req.params.id, res);
 });
 router.post('/', AuthService.RequireJWT, createBoardValidator, checkValidation, function(req, res, next) {
-    const { name, startAt, endAt, resolution } = req.body;
+    const { name, startAt, endAt, resolution, colors } = req.body;
     const owner = req.user.id;
 
-    BoardService.create(name, startAt, endAt, resolution, owner).then(board => {
+    BoardService.create(name, startAt, endAt, resolution, owner, colors).then(board => {
         renderInfo(board._id, res);
     }).catch(err => {
         res.status(500).json({error: err.message});
     });
 });
-router.put('/:id', updateBoardValidator, function(req, res, next) {
+router.put('/:id', AuthService.RequireJWT, updateBoardValidator, checkValidation, function(req, res, next) {
     const { name, startAt, endAt, resolution } = req.body;
 
     BoardService.update(req.params.id, name, startAt, endAt, resolution)
@@ -98,7 +121,7 @@ router.put('/:id', updateBoardValidator, function(req, res, next) {
         });
 });
 
-router.post('/:id/:pixelindex', (req, res, next) => {
+/*router.post('/:id/:pixelindex', (req, res, next) => {
     const { color } = req.body;
     const pixelIndex = parseInt(req.params.pixelindex);
     if (isNaN(pixelIndex) || pixelIndex < 0) {
@@ -113,16 +136,89 @@ router.post('/:id/:pixelindex', (req, res, next) => {
         .catch(err => {
             res.status(500).json({error: err.message});
         });
-});
+});*/
 
-router.delete('/:id', function(req, res, next) {
-    BoardService.remove(req.params.id)
-        .then(() => {
-            res.status(204).end();
+router.delete('/:id', AuthService.RequireJWT, function(req, res, next) {
+    const owner = req.user.id;
+    BoardService.remove(req.params.id, owner)
+        .then(success => {
+            if (success) {
+                res.status(204).end();
+            } else {
+                res.status(404).json({error: 'Board not found' });
+            }
         })
         .catch(err => {
             res.status(500).json({error: err.message});
         });
+});
+
+router.get('/:id/thumbnail', function(req, res, next) {
+    BoardService.getThumbnail(req.params.id)
+        .then(thumbnail => {
+            res.writeHead(200, {
+                'Content-Type': 'image/png',
+                'Content-Length': thumbnail.length
+            });
+            res.end(thumbnail);
+        })
+        .catch(err => {
+            res.status(500).json({error: err.message});
+        });
+});
+
+router.ws('/:id', function(ws, req) {
+    const msgId = {
+        // server
+        resize: 1,
+        pixel: 2,
+        delete: 3,
+        pixels: 4,
+
+        // client
+        setPixel: 10,
+    };
+    const callback = {
+        onResize: (size) => {
+            ws.send(new Uint8Array([msgId.resize, size.x, size.y, size.bitsPerPixel]));
+        },
+        onPixelUpdate: (bitIndex, color) => {
+            ws.send(new Uint8Array([msgId.pixel, bitIndex, color]));
+        },
+        onHeaderUpdate: (header) => {
+            const headerJson = JSON.stringify(header);
+            ws.send(new Uint8Array([msgId.header, ...Buffer.from(headerJson)]));
+        },
+        onDelete: () => {
+            ws.send(new Uint8Array([msgId.delete]));
+            ws.close();
+        },
+        onPixelsData: (width, height, bitsPerPixel, pixels) => {
+            ws.send(new Uint8Array([msgId.pixels, ...pixels]));
+        }
+    };
+    if (!BoardService.subscribe(req.params.id, callback)) {
+        // board does not exist
+        ws.close();
+        return
+    }
+    ws.on('close', () => {
+        BoardService.unsubscribe(req.params.id, callback);
+    });
+    ws.on('message', (msg) => {
+        const data = new Uint8Array(msg);
+        switch (data[0]) {
+            case msgId.setPixel:
+                BoardService.setPixel(req.params.id, data[1], data[2])
+                    .catch(err => {
+                        console.error(err);
+                    });
+                break;
+            default:
+                console.error('Unknown WS message', data);
+                break;
+        }
+    });
 });
 
 module.exports = router;

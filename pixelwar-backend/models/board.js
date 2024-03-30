@@ -32,7 +32,17 @@ const Board = new Schema({
             min: 1,
             max: 1000
         }
-    }
+    },
+    colors: [{
+        type: String,
+        required: true,
+        validate: {
+            validator: function (v) {
+                return /^#[0-9A-F]{6}$/i.test(v);
+            },
+            message: props => `${props.value} is not a valid color`
+        }
+    }]
 })
 
 module.exports = mongoose.model("Board", Board);
