@@ -182,6 +182,10 @@ io.on("connection", (socket) => {
   socket.on("setPixelColor", (boardId, data) => {
     io.to(boardId).emit("pixel-updated", data);
   });
+
+  socket.on("add-log", (data) => {
+    io.to(data.boardId).emit("added-log", data);
+  });
 });
 
 io.listen(5173);
