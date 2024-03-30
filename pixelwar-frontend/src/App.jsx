@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./components/common/Header";
 import CreateBoardPage from "@pages/admin/CreateBoardPage";
 import EditBoardPage from "@pages/admin/EditBoardPage";
-import PixelBoardListPage from "./components/common/PixelBoardListPage";
+import PixelBoardListPage from "@pages/admin/PixelBoardsPage";
 
 function App() {
   return (

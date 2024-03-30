@@ -7,8 +7,8 @@ function CreateBoardPage() {
   };
 
   return (
-    <div>
-      <h2>Créer un PixelBoard</h2>
+    <div className="mt-5">
+      <h2 className='text-center mb-5'>Créer un nouveau tableau</h2>
       <PixelBoardForm initialData={{}} onSubmit={handleSubmit} />
     </div>
   );
