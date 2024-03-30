@@ -1,0 +1,31 @@
+$white: #ffffff;
+
+$theme-colors: (
+  "light": #ede0c4,
+  "dark": #131f23,
+  "primary": #ff4500,
+  "secondary": #1870f4,
+  "info": #26953d,
+  "success": #179c41,
+  "warning": #ecc419,
+  "danger": #ee0b38,
+);
+
+$body-bg: #0b1416;
+$body-color: white;
+
+$btn-color: white;
+
+$pagination-disabled-bg: #1a282d;
+$pagination-active-bg: #ff4500;
+$pagination-bg: #ff4500;
+$pagination-color: white;
+$dropdown-border-color: #ff4500;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+@each $color, $value in $theme-colors {
+  .btn-#{$color} {
+    color: $white !important;
+  }
+}
