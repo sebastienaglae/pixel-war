@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, CardColumns } from "reactstrap";
+import { Container, Row, CardColumns, Button, Col } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 import BoardItem from "@components/admin/BoardItem";
 import PaginationComponent from "@components/common/PaginationComponent";
 import SearchBar from "@components/common/SearchBar";
 import FilterSortComponent from "@components/common/FilterSortComponent";
 
 function PixelBoardListPage() {
+  let navigate = useNavigate();
   const initialBoards = [
     {
       id: 1,
@@ -64,6 +66,16 @@ function PixelBoardListPage() {
     <Container className='mt-5'>
       <Row>
         <SearchBar onSearch={handleSearch} />
+      </Row>
+      <Row>
+        <Col className="d-flex flex-row-reverse">
+          <Button
+            color='primary'
+            onClick={() => navigate("/admin/create-board")}
+          >
+            Créer un pixel board
+          </Button>
+        </Col>
       </Row>
       <Row>
         <FilterSortComponent
