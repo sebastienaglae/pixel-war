@@ -2,7 +2,7 @@ import { Button } from "reactstrap";
 import Form from "@components/form/Form.jsx";
 import { apiURL } from "../socket";
 
-function TestPage() {
+function CreatePage() {
   return (
     <div style={{ width: "100%", height: "92%" }}>
       <div style={{ width: "100%", height: "15%" }}>
@@ -16,4 +16,4 @@ function TestPage() {
   );
 }
 
-export default TestPage;
+export default CreatePage;

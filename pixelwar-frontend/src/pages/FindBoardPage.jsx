@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 import { apiURL } from "../socket";
 
-function TestPage() {
+function FindBoardPage() {
   const [boardId, setBoardId] = useState(null);
 
   const navigate = useNavigate(); // Initialize useNavigate hook
@@ -29,4 +29,4 @@ function TestPage() {
   );
 }
 
-export default TestPage;
+export default FindBoardPage;
