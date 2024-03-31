@@ -16,7 +16,7 @@ import ColorItem from "./ColorItem";
 
 function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
   const [pixelBoard, setPixelBoard] = useState({
-    title: "",
+    name: "",
     resolution: {
       x: 0,
       y: 0,
@@ -35,6 +35,14 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setPixelBoard((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleResolutionChange = (e) => {
+    const { name, value } = e.target;
+    setPixelBoard((prevState) => ({
+      ...prevState,
+      resolution: { ...prevState.resolution, [name]: value },
+    }));
   };
 
   const handleDateChange = (name, date) => {
@@ -59,6 +67,20 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
     setPixelBoard((prevState) => ({ ...prevState, colors }));
   };
 
+  const onDeleteColor = (index) => {
+    const colors = [...pixelBoard.colors];
+    colors.splice(index, 1);
+    setPixelBoard((prevState) => ({ ...prevState, colors }));
+  };
+
+  const getRandomColor = () => {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  };
 
   return (
     <Container>
@@ -71,7 +93,9 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
                 type='text'
                 name='name'
                 id='name'
-                value={pixelBoard.title}
+                minLength={4}
+                maxLength={16}
+                value={pixelBoard.name}
                 onChange={handleChange}
                 required
               />
@@ -84,19 +108,23 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
               <div className='d-flex'>
                 <Input
                   type='number'
-                  name='resolutionX'
+                  name='x'
                   id='resolutionX'
+                  min={1}
+                  max={1000}
                   value={pixelBoard.resolution.x}
-                  onChange={handleChange}
+                  onChange={handleResolutionChange}
                   required
                 />
                 <span className='mx-2 my-auto'>X</span>
                 <Input
                   type='number'
-                  name='resolutionY'
+                  name='y'
                   id='resolutionY'
+                  min={1}
+                  max={1000}
                   value={pixelBoard.resolution.y}
-                  onChange={handleChange}
+                  onChange={handleResolutionChange}
                   required
                 />
               </div>
@@ -125,11 +153,17 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
               <Label>Couleurs</Label>
               <Card body color='dark' className='d-flex flex-column'>
                 {pixelBoard.colors.map((color, index) => (
-                  <ColorItem key={index} id={index} />
+                  <ColorItem
+                    key={index}
+                    id={index + 1}
+                    onColorChange={(id, color) => onColorChange(id - 1, color)}
+                    value={color}
+                    onDelete={(id) => onDeleteColor(id - 1)}
+                  />
                 ))}
                 <Button
                   color='primary'
-                  onClick={() => addColor()}
+                  onClick={() => addColor(getRandomColor())}
                   className='mt-2'
                 >
                   Ajouter une couleur
