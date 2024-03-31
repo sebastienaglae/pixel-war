@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
+import { useState, useEffect } from "react";
 import {
   Button,
   Form,
@@ -8,16 +9,21 @@ import {
   Container,
   Row,
   Col,
+  Card,
 } from "reactstrap";
 import DateTimePicker from "react-datetime-picker";
+import ColorItem from "./ColorItem";
 
-function PixelBoardForm({ initialData = {}, onSubmit }) {
+function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
   const [pixelBoard, setPixelBoard] = useState({
     title: "",
-    size: "",
-    delay: "",
-    creationDate: new Date(),
-    endDate: new Date(),
+    resolution: {
+      x: 0,
+      y: 0,
+    },
+    colors: [],
+    startAt: new Date(),
+    endAt: new Date(),
     mode: "",
     ...initialData,
   });
@@ -40,43 +46,61 @@ function PixelBoardForm({ initialData = {}, onSubmit }) {
     onSubmit(pixelBoard);
   };
 
+  const addColor = (hex) => {
+    setPixelBoard((prevState) => ({
+      ...prevState,
+      colors: [...prevState.colors, hex],
+    }));
+  };
+
+  const onColorChange = (index, color) => {
+    const colors = [...pixelBoard.colors];
+    colors[index] = color;
+    setPixelBoard((prevState) => ({ ...prevState, colors }));
+  };
+
+
   return (
     <Container>
       <Row>
         <Col sm='12' md={{ size: 6, offset: 3 }}>
           <Form onSubmit={handleSubmit}>
             <FormGroup>
-              <Label for='title'>Titre</Label>
+              <Label for='name'>Nom</Label>
               <Input
                 type='text'
-                name='title'
-                id='title'
+                name='name'
+                id='name'
                 value={pixelBoard.title}
                 onChange={handleChange}
                 required
               />
+              <small>
+                Doit être unique et doit faire entre 4 et 16 caractères
+              </small>
             </FormGroup>
             <FormGroup>
               <Label for='size'>Taille</Label>
-              <Input
-                type='number'
-                name='size'
-                id='size'
-                value={pixelBoard.size}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for='delay'>Délai entre contributions (en secondes)</Label>
-              <Input
-                type='number'
-                name='delay'
-                id='delay'
-                value={pixelBoard.delay}
-                onChange={handleChange}
-                required
-              />
+              <div className='d-flex'>
+                <Input
+                  type='number'
+                  name='resolutionX'
+                  id='resolutionX'
+                  value={pixelBoard.resolution.x}
+                  onChange={handleChange}
+                  required
+                />
+                <span className='mx-2 my-auto'>X</span>
+                <Input
+                  type='number'
+                  name='resolutionY'
+                  id='resolutionY'
+                  value={pixelBoard.resolution.y}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <small>Doit être compris entre 1 et 1000 pixels</small>
             </FormGroup>
             <FormGroup>
               <Label for='mode'>Mode</Label>
@@ -98,11 +122,27 @@ function PixelBoardForm({ initialData = {}, onSubmit }) {
               </Input>
             </FormGroup>
             <FormGroup>
+              <Label>Couleurs</Label>
+              <Card body color='dark' className='d-flex flex-column'>
+                {pixelBoard.colors.map((color, index) => (
+                  <ColorItem key={index} id={index} />
+                ))}
+                <Button
+                  color='primary'
+                  onClick={() => addColor()}
+                  className='mt-2'
+                >
+                  Ajouter une couleur
+                </Button>
+                <small>Entre 1 et 15 couleurs</small>
+              </Card>
+            </FormGroup>
+            <FormGroup>
               <Label>Date de création</Label>
               <br />
               <DateTimePicker
-                onChange={(date) => handleDateChange("creationDate", date)}
-                value={pixelBoard.creationDate}
+                onChange={(date) => handleDateChange("startAt", date)}
+                value={pixelBoard.startAt}
                 required
               />
             </FormGroup>
@@ -110,11 +150,12 @@ function PixelBoardForm({ initialData = {}, onSubmit }) {
               <Label>Date de fin</Label>
               <br />
               <DateTimePicker
-                onChange={(date) => handleDateChange("endDate", date)}
-                value={pixelBoard.endDate}
+                onChange={(date) => handleDateChange("endAt", date)}
+                value={pixelBoard.endAt}
                 required
               />
             </FormGroup>
+            {error && <p className='text-danger'>{error}</p>}
             <Button color='primary' type='submit'>
               Soumettre
             </Button>
