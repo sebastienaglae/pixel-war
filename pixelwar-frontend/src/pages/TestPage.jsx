@@ -1,11 +1,22 @@
 import { Button } from "reactstrap";
+import { useContext } from "react";
+import { ThemeContext } from "../App";
 
 function TestPage() {
+    const themeContext = useContext(ThemeContext);
     return (
-        <div>
-            <h1>Test Page</h1>
-            <Button color="primary">Primary</Button>
-        </div>
+      <div>
+        <Button
+          color='primary'
+          onClick={() =>
+            themeContext.theme == "light"
+              ? themeContext.setTheme("dark")
+              : themeContext.setTheme("light")
+          }
+        >
+          {themeContext.theme}
+        </Button>
+      </div>
     );
 }
 
