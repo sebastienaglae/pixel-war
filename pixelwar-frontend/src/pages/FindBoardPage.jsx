@@ -25,7 +25,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 import { apiURL } from "../socket";
 
-function TestPage() {
+function FindBoardPage() {
   const [boardId, setBoardId] = useState(null);
 
   const navigate = useNavigate(); // Initialize useNavigate hook
@@ -51,4 +51,4 @@ function TestPage() {
 >>>>>>> d340ad7 (fix(front, api): handle socket disconnection and leave room in a better way)
 }
 
-export default TestPage;
+export default FindBoardPage;

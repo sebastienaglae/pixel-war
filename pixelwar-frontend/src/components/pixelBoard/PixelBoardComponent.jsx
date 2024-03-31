@@ -4,10 +4,9 @@ import Grid from "./Grid/Grid";
 import ColorPicker from "./ColorPicker/ColorPicker";
 import StatsNav from "./StatsNav/StatsNav";
 import axios from "axios";
-import { socket } from "../../socket";
 
 function PixelBoardComponent(props) {
-  const { id, user, apiUrl } = props;
+  const { id, user, apiUrl, socket } = props;
   const [selectedColor, setSelectedColor] = useState("#131313");
   const [boardData, setBoardData] = useState(null);
   const [lastUpdate, setLastUpdate] = useState(null);

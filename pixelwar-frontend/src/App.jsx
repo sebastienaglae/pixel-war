@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "@pages/HomePage";
+<<<<<<< HEAD
 import TestPage from "@pages/TestPage";
 import LoginPage from "@pages/LoginPage";
 import SignupPage from "@pages/SignupPage";
@@ -16,6 +17,14 @@ export const ThemeContext = createContext({
   themePreference: "auto", // 'auto' or 'user'
   setTheme: () => {},
 });
+=======
+import BoardPage from "@pages/BoardPage";
+import CreatePage from "@pages/CreatePage";
+import { Outlet } from "react-router-dom";
+import { socket } from "./socket";
+import { useEffect } from "react";
+import FindBoardPage from "./pages/FindBoardPage";
+>>>>>>> 69833e7 (refactor(front): some refactor on find board page and socket is now given as parameter to pixelboard component)
 
 function App() {
   useEffect(() => {
@@ -30,12 +39,18 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} />
+<<<<<<< HEAD
         <Route path='/test' element={<TestPage />} />
         <Route path='/admin/create-board' element={<CreateBoardPage />} />
         <Route path='/admin/edit-board/:boardId' element={<EditBoardPage />} />
         <Route path='/admin' element={<PixelBoardListPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignupPage />} />
+=======
+        <Route path="/find_board" element={<FindBoardPage />} />
+        <Route path="/board/:id" element={<BoardPage />} />
+        <Route path="/create_board" element={<CreatePage />} />
+>>>>>>> 69833e7 (refactor(front): some refactor on find board page and socket is now given as parameter to pixelboard component)
       </Route>
     </Routes>
   );
@@ -83,10 +98,20 @@ function Layout() {
   };
 
   return (
+<<<<<<< HEAD
     <ThemeContext.Provider
       value={{ theme, setTheme: manualSetTheme, themePreference }}
     >
       <NavigationBar />
+=======
+    <>
+      <h1>Navigation</h1>
+      <nav>
+        <Link to="/">Index</Link>&nbsp;&nbsp;
+        <Link to="/find_board">Find a board</Link>&nbsp;&nbsp;
+        <Link to="/create_board">Create Board</Link>&nbsp;&nbsp;
+      </nav>
+>>>>>>> 69833e7 (refactor(front): some refactor on find board page and socket is now given as parameter to pixelboard component)
       <Outlet />
     </ThemeContext.Provider>
   );
