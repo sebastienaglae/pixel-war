@@ -98,6 +98,10 @@ $themes: (
       }
     }
 
+    .form-label {
+      color: map-get($t, "text") !important;
+    }
+
     .form-select {
       background-color: map-get($t, "background") !important;
       color: map-get($t, "text") !important;
@@ -127,6 +131,10 @@ $themes: (
 
     .card-text {
       color: map-get($t, "text") !important;
+    }
+
+    .card-footer {
+      color: #7e7e7e !important;
     }
   }
 }

@@ -1,6 +1,15 @@
 import React from "react";
-import { Card, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  Button,
+  CardHeader,
+  CardBody,
+  CardText,
+  CardFooter,
+  CardTitle,
+  CardImg,
+} from "reactstrap";
 
 function BoardItem({ data }) {
   let navigate = useNavigate();
@@ -20,8 +29,8 @@ function BoardItem({ data }) {
   };
 
   return (
-    <Card className='d-flex flex-row' bg='dark' text='white'>
-      <Card.Img
+    <Card className='d-flex flex-row' color='dark' text='white'>
+      <CardImg
         variant='left'
         src={data.image || "https://picsum.photos/200"}
         alt='random'
@@ -29,27 +38,27 @@ function BoardItem({ data }) {
         className='rounded-start'
       />
       <div className='d-flex flex-column w-100'>
-        <Card.Header>
-          <Card.Title>{data.name}</Card.Title>
-        </Card.Header>
-        <Card.Body>
-          <Card.Text>{data.description}</Card.Text>
+        <CardHeader>
+          <CardTitle>{data.name}</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <CardText>{data.description}</CardText>
           <div className='mt-2 d-flex justify-content-end'>
-            <Button variant='success' onClick={handleView} className='ms-2'>
+            <Button color='success' onClick={handleView} className='ms-2'>
               Voir
             </Button>
-            <Button variant='primary' onClick={handleEdit} className='ms-2'>
+            <Button color='primary' onClick={handleEdit} className='ms-2'>
               Modifier
             </Button>
-            <Button variant='danger' onClick={handleDelete} className='ms-2'>
+            <Button color='danger' onClick={handleDelete} className='ms-2'>
               Supprimer
             </Button>
           </div>
-        </Card.Body>
-        <Card.Footer className='text-muted'>
+        </CardBody>
+        <CardFooter color='text-muted'>
           Dernière modification le {new Date(data.date).toLocaleDateString()}{" "}
           par {data.author}
-        </Card.Footer>
+        </CardFooter>
       </div>
     </Card>
   );

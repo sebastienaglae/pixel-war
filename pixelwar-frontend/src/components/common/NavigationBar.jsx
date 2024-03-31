@@ -2,7 +2,7 @@ import React from "react";
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from "reactstrap";
 import { FaHome, FaRedditAlien, FaSignInAlt, FaHammer } from "react-icons/fa";
 
-const Header = () => {
+function NavigationBar() {
   return (
     <Navbar expand='md' color='primary'>
       <NavbarBrand href='/' style={{ color: "white", fontWeight: "bold" }}>
@@ -16,18 +16,23 @@ const Header = () => {
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink href='/admin' style={{ color: "white" }}>
-            <FaHammer style={{ marginRight: "5px" }} /> Admin
+          <NavLink href='/login' style={{ color: "white" }}>
+            <FaSignInAlt style={{ marginRight: "5px" }} /> Login
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink href='/login' style={{ color: "white" }}>
-            <FaSignInAlt style={{ marginRight: "5px" }} /> Login
+          <NavLink href='/signup' style={{ color: "white" }}>
+            <FaSignInAlt style={{ marginRight: "5px" }} /> Signup
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink href='/admin' style={{ color: "white" }}>
+            <FaHammer style={{ marginRight: "5px" }} /> Admin
           </NavLink>
         </NavItem>
       </Nav>
     </Navbar>
   );
-};
+}
 
-export default Header;
+export default NavigationBar;

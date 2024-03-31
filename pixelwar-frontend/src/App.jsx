@@ -1,12 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "@pages/HomePage";
 import TestPage from "@pages/TestPage";
+import LoginPage from "@pages/LoginPage";
+import SignupPage from "@pages/SignupPage";
 import { Outlet } from "react-router-dom";
-import Header from "./components/common/Header";
+import NavigationBar from "./components/common/NavigationBar";
 import CreateBoardPage from "@pages/admin/CreateBoardPage";
 import EditBoardPage from "@pages/admin/EditBoardPage";
 import PixelBoardListPage from "@pages/admin/PixelBoardsPage";
 import React, { useEffect, useState, createContext } from "react";
+
 
 export const ThemeContext = createContext({
   theme: "light",
@@ -23,6 +26,8 @@ function App() {
         <Route path='/admin/create-board' element={<CreateBoardPage />} />
         <Route path='/admin/edit-board/:boardId' element={<EditBoardPage />} />
         <Route path='/admin' element={<PixelBoardListPage />} />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/signup' element={<SignupPage />} />
       </Route>
     </Routes>
   );
@@ -73,7 +78,7 @@ function Layout() {
     <ThemeContext.Provider
       value={{ theme, setTheme: manualSetTheme, themePreference }}
     >
-      <Header />
+      <NavigationBar />
       <Outlet />
     </ThemeContext.Provider>
   );
