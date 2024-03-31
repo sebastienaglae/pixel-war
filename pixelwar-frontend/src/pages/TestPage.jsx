@@ -2,6 +2,7 @@ import { Button } from "reactstrap";
 import SelectComponent from "@components/select/SelectComponent.jsx";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate hook
+import { apiURL } from "../socket";
 
 function TestPage() {
   const [boardId, setBoardId] = useState(null);
@@ -13,7 +14,7 @@ function TestPage() {
     if (boardId) {
       navigate(`/board/${boardId}`); // Navigate to BoardPage with the retrieved boardId
     }
-  }, [boardId, navigate]); // Trigger effect when boardId or navigate changes
+  }, [boardId]); // Trigger effect when boardId or navigate changes
 
   return (
     <div style={{ width: "100%", height: "92%" }}>
@@ -22,11 +23,7 @@ function TestPage() {
         <Button color="primary">Primary</Button>
       </div>
       <div style={{ width: "100%", height: "85%" }}>
-        {!boardId ? (
-          <SelectComponent setter={setBoardId} />
-        ) : (
-          <p>{"No board :("}</p>
-        )}
+        <SelectComponent setter={setBoardId} apiUrl={apiURL} />
       </div>
     </div>
   );

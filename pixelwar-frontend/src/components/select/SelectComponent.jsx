@@ -3,13 +3,13 @@ import axios from "axios";
 import "./SelectComponent.css";
 
 function SelectComponent(props) {
-  const { setter } = props;
+  const { setter, apiUrl } = props;
   const [boards, setBoards] = useState([]);
 
   useEffect(() => {
     // Fetch all board names
     axios
-      .get("http://localhost:3001/get-boards")
+      .get(`${apiUrl}/get-boards`)
       .then((response) => {
         setBoards(response.data.boards);
       })

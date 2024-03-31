@@ -9,7 +9,8 @@ function Row(props) {
     lastUpdate,
     setLastUpdate,
     currAuthor,
-    setLogs,
+    apiUrl,
+    socket,
   } = props;
   let pixels = [];
   for (let i = 0; i < boardData.width; i++) {
@@ -23,7 +24,8 @@ function Row(props) {
         lastUpdate={lastUpdate}
         setLastUpdate={setLastUpdate}
         currAuthor={currAuthor}
-        setLogs={setLogs}
+        apiUrl={apiUrl}
+        socket={socket}
       />
     );
   }

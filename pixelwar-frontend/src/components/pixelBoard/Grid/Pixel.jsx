@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Pixel.css";
-import { socket } from "../../../socket";
 import axios from "axios";
 import { addSeconds, isAfter, differenceInSeconds } from "date-fns";
 
@@ -13,7 +12,8 @@ function Pixel(props) {
     lastUpdate,
     setLastUpdate,
     currAuthor,
-    setLogs,
+    apiUrl,
+    socket,
   } = props;
   const [pixelColor, setPixelColor] = useState(
     boardData.board_history[y][x].color ?? "#fff"
@@ -67,7 +67,7 @@ function Pixel(props) {
       ) {
         // Update pixel color on server
         axios
-          .put(`http://localhost:3001/update-pixel`, {
+          .put(`${apiUrl}/update-pixel`, {
             boardId: boardData.id,
             x: x,
             y: y,
@@ -84,7 +84,6 @@ function Pixel(props) {
               selectedColor: selectedColor,
               author: currAuthor,
             });
-            console.log("Pixel color updated on server", response);
             const payload = {
               boardId: boardData.id,
               author: currAuthor,
@@ -93,7 +92,6 @@ function Pixel(props) {
               color: selectedColor,
               lastUpdate: lastUpdateVal,
             };
-            setLogs(payload);
             socket.emit("add-log", payload);
           })
           .catch((error) => {
