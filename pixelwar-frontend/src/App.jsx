@@ -9,8 +9,7 @@ import NavigationBar from "./components/common/NavigationBar";
 import CreateBoardPage from "@pages/admin/CreateBoardPage";
 import EditBoardPage from "@pages/admin/EditBoardPage";
 import PixelBoardListPage from "@pages/admin/PixelBoardsPage";
-import React, { useEffect, useState, createContext } from "react";
-
+import { useEffect, useState, createContext } from "react";
 
 export const ThemeContext = createContext({
   theme: "light",
@@ -57,8 +56,8 @@ function App() {
 }
 
 function Layout() {
-  const [theme, setTheme] = useState("light");
-  const [themePreference, setThemePreference] = useState("auto");
+  const [theme, setTheme] = useState();
+  const [themePreference, setThemePreference] = useState();
 
   useEffect(() => {
     const getPreferredTheme = () => {
@@ -73,7 +72,8 @@ function Layout() {
     };
 
     const savedTheme = localStorage.getItem("theme");
-    const savedThemePreference = localStorage.getItem("themePreference") || "auto";
+    const savedThemePreference =
+      localStorage.getItem("themePreference") || "auto";
 
     if (savedThemePreference === "auto") {
       setTheme(getPreferredTheme());
@@ -82,19 +82,18 @@ function Layout() {
       setTheme(savedTheme || "dark");
       setThemePreference("user");
     }
-
-
   }, []);
 
   useEffect(() => {
     document.body.className = `${theme}-mode`;
+    if (!theme || !themePreference) return;
     localStorage.setItem("theme", theme);
     localStorage.setItem("themePreference", themePreference);
   }, [theme, themePreference]);
 
   const manualSetTheme = (newTheme) => {
-    setTheme(newTheme);
     setThemePreference("user");
+    setTheme(newTheme);
   };
 
   return (
