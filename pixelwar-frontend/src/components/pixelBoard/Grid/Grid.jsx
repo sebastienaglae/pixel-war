@@ -8,7 +8,8 @@ function Grid(props) {
     lastUpdate,
     setLastUpdate,
     currAuthor,
-    setLogs,
+    apiUrl,
+    socket,
   } = props;
   let rows = [];
   for (let i = 0; i < boardData.height; i++) {
@@ -21,7 +22,8 @@ function Grid(props) {
         lastUpdate={lastUpdate}
         setLastUpdate={setLastUpdate}
         currAuthor={currAuthor}
-        setLogs={setLogs}
+        apiUrl={apiUrl}
+        socket={socket}
       />
     );
   }

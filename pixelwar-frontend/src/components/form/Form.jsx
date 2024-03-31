@@ -1,9 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import "./Form.css";
-
-const Form = () => {
-  const BACKEND_URL = "http://localhost:3001";
+const Form = (props) => {
+  const { apiUrl } = props;
+  const BACKEND_URL = apiUrl;
   const [formData, setFormData] = useState({
     name: "untitled",
     width: 3,
@@ -19,12 +19,7 @@ const Form = () => {
     e.preventDefault();
     try {
       // TODO: update field author
-      const response = await axios.post(
-        BACKEND_URL + "/create-pixelboard",
-        formData
-      );
-      console.log(response);
-      //console.log(await axios.get(BACKEND_URL + "/get-boards"));
+      await axios.post(BACKEND_URL + "/create-pixelboard", formData);
     } catch (error) {
       console.error("Error creating pixel board: ", error);
     }

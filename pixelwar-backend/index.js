@@ -57,7 +57,6 @@ app.post("/create-pixelboard", (req, res) => {
   ) {
     return res.status(400).json({ error: "Missing required fields" });
   }
-  console.log(overwrite);
   let newBoard = generateBoard(width, height);
   // Create new pixel board object
   const newPixelBoard = {
@@ -167,16 +166,24 @@ io.on("connection", (socket) => {
     });
 
     // Join the new board room
-    socket.join(boardId);
-    console.log(`User ${socket.id} joined board ${boardId}`);
+    if (!socket.rooms.has(boardId)) {
+      socket.join(boardId);
+      console.log(`User ${socket.id} joined board ${boardId}`);
+    }
   };
 
   // Event listener for joining a board room
   socket.on("joinBoard", joinBoardRoom);
 
+  socket.on("disconnect", () => {
+    console.log("user", socket.id, " has disconnected");
+  });
+
   socket.on("leaveRoom", (boardId) => {
-    socket.leave(boardId);
-    console.log("User " + socket.id + " leaved.");
+    if (socket.rooms.has(boardId)) {
+      socket.leave(boardId);
+      console.log("User " + socket.id + " leaved the board " + boardId + ".");
+    }
   });
 
   socket.on("setPixelColor", (boardId, data) => {
