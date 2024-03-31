@@ -3,8 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types'; // Import PropTypes
 import { Card, CardBody, CardTitle, CardText } from 'reactstrap';
 
-const CustomCard = (props) => {
-  const { title, content } = props; // Destructure props
+function CustomCard(props) => {
+  const { title, content } = props;
 
   return (
     <Card>
