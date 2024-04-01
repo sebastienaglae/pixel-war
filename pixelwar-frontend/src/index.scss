@@ -2,12 +2,12 @@ $white: #ffffff;
 $black: #000000;
 
 $theme-dark: (
-  "light": #ede0c4,
+  "light": #F6F6F2,
   "dark": #131f23,
-  "primary": #ff4500,
+  "primary": #388087,
   "secondary": #1870f4,
   "info": #26953d,
-  "success": #179c41,
+  "success": #6FB3B8,
   "warning": #ecc419,
   "danger": #ee0b38,
   "background": #0b1416,
@@ -17,14 +17,14 @@ $theme-dark: (
 
 $theme-light: (
   "light": #131f23,
-  "dark": #d3c098,
-  "primary": #ff4500,
-  "secondary": #1870f4,
+  "dark": #BADFE7,
+  "primary": #388087,
+  "secondary": #6FB3B8,
   "info": #26953d,
-  "success": #179c41,
+  "success": #6FB3B8,
   "warning": #ecc419,
   "danger": #ee0b38,
-  "background": #ede0c4,
+  "background": #F6F6F2,
   "background-secondary": #b4a78b,
   "text": $black
 );

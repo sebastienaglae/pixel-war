@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from "reactstrap";
-import { FaHome, FaRedditAlien, FaSignInAlt, FaHammer } from "react-icons/fa";
+import { FaHome, FaRedditAlien, FaSignInAlt, FaHammer, FaPaintRoller } from "react-icons/fa";
 
 function NavigationBar() {
   return (
@@ -10,6 +10,11 @@ function NavigationBar() {
         Reddot
       </NavbarBrand>
       <Nav className='ml-auto' navbar>
+          <NavItem>
+            <NavLink href="/admin/create-board" style={{ color: "white" }}>
+              <FaPaintRoller style={{ marginRight: "5px" }} /> Create a board
+            </NavLink>
+          </NavItem>
         <NavItem>
           <NavLink href='/' style={{ color: "white" }}>
             <FaHome style={{ marginRight: "5px" }} /> Home
