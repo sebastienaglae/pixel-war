@@ -4,7 +4,6 @@ import BoardPage from "@pages/BoardPage";
 import CreatePage from "@pages/CreatePage";
 import { socket } from "./socket";
 import FindBoardPage from "./pages/FindBoardPage";
-import TestPage from "@pages/TestPage";
 import LoginPage from "@pages/LoginPage";
 import SignupPage from "@pages/SignupPage";
 import { Outlet } from "react-router-dom";
@@ -36,7 +35,6 @@ function App() {
         <Route path="/find_board" element={<FindBoardPage />} />
         <Route path="/board/:id" element={<BoardPage />} />
         <Route path="/create_board" element={<CreatePage />} />
-        <Route path='/test' element={<TestPage />} />
         <Route path='/admin/create-board' element={<CreateBoardPage />} />
         <Route path='/admin/edit-board/:boardId' element={<EditBoardPage />} />
         <Route path='/admin' element={<PixelBoardListPage />} />
