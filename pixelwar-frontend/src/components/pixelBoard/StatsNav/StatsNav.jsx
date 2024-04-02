@@ -1,22 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./StatsNav.css";
 
-function StatsNav() {
+function StatsNav(props) {
+  const { logs } = props;
   const [statToggle, setStatToggle] = useState(false);
-  console.log(statToggle);
+  const MAX_LOGS_DISPLAY = 5;
+  let items = [];
+
+  for (let i = 0; i < Math.min(logs.length, MAX_LOGS_DISPLAY); i++) {
+    let log = logs[logs.length - i - 1];
+    items.push(
+      <li key={i}>
+        {`${log.author} | x = ${log.x} | y = ${log.y} | color = ${log.color} | last update = ${log.lastUpdate}`}
+      </li>
+    );
+  }
+
   return !statToggle ? (
     <div className="statsNav" onClick={() => setStatToggle(true)}>
       {"<<"}
     </div>
   ) : (
     <div className="menu">
-      MY MENU
+      Last pixels:
       <div onClick={() => setStatToggle(false)}>{">>"}</div>
-      <ul>
-        <li>ITEM 1</li>
-        <li>ITEM 2</li>
-        <li>ITEM 3</li>
-      </ul>
+      <ul>{items}</ul>
     </div>
   );
 }
