@@ -33,7 +33,7 @@ function LoginPage() {
   };
 
   return (
-    <Container className='mt-5'>
+    <Container className='my-5'>
       <Row>
         <Col sm='12' md={{ size: 6, offset: 3 }}>
           <Card className='bg-dark'>

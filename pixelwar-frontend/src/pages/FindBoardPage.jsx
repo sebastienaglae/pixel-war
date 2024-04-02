@@ -2,7 +2,6 @@ import { Button } from "reactstrap";
 import SelectComponent from "@components/select/SelectComponent.jsx";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate hook
-import { apiURL } from "../socket";
 
 function FindBoardPage() {
   const [boardId, setBoardId] = useState(null);
@@ -23,7 +22,7 @@ function FindBoardPage() {
         <Button color="primary">Primary</Button>
       </div>
       <div style={{ width: "100%", height: "85%" }}>
-        <SelectComponent setter={setBoardId} apiUrl={apiURL} />
+        {/* <SelectComponent setter={setBoardId} apiUrl={apiURL} /> */}
       </div>
     </div>
   );

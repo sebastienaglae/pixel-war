@@ -1,6 +1,5 @@
 import { Button } from "reactstrap";
 import Form from "@components/form/Form.jsx";
-import { apiURL } from "../socket";
 
 function CreatePage() {
   return (
@@ -10,7 +9,7 @@ function CreatePage() {
         <Button color="primary">Primary</Button>
       </div>
       <div style={{ width: "100%", height: "85%" }}>
-        <Form apiUrl={apiURL} />
+        {/* <Form apiUrl={apiURL} /> */}
       </div>
     </div>
   );
