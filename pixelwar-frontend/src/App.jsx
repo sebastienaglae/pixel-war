@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import HomePage from "@pages/HomePage";
 import BoardPage from "@pages/BoardPage";
 import CreatePage from "@pages/CreatePage";
-import { socket } from "./socket";
 import FindBoardPage from "./pages/FindBoardPage";
 import LoginPage from "@pages/LoginPage";
 import SignupPage from "@pages/SignupPage";
@@ -20,14 +19,6 @@ export const ThemeContext = createContext({
 });
 
 function App() {
-  useEffect(() => {
-    socket.on("connect", () => {
-      return () => {
-        socket.off("connect");
-      };
-    });
-  }, []);
-
   return (
     <Routes>
       <Route path="/" element={<Layout />}>

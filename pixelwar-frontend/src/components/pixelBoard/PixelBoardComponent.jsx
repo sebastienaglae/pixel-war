@@ -1,81 +1,68 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./PixelBoardComponent.css";
 import Grid from "./Grid/Grid";
 import ColorPicker from "./ColorPicker/ColorPicker";
 import StatsNav from "./StatsNav/StatsNav";
-import axios from "axios";
 
-function PixelBoardComponent(props) {
-  const { id, user, apiUrl, socket } = props;
-  const [selectedColor, setSelectedColor] = useState("#131313");
-  const [boardData, setBoardData] = useState(null);
-  const [lastUpdate, setLastUpdate] = useState(null);
-  const [logs, setLogs] = useState([]);
-  const currAuthor = user ?? "visiteur_" + socket.id; // TODO: here set a way to retrieve username
-
-  const HandleSetLogs = (log) => {
-    // Update logs state with the new log
-    setLogs((prevLogs) => [...prevLogs, log]);
+function PixelBoardComponent({ id }) {
+  const computePixelSize = (rowCount) => {
+    return Math.min(25, Math.floor((window.innerHeight * 0.7) / rowCount));
   };
 
-  useEffect(() => {
-    // Fetch board data by ID
-    axios
-      .get(`${apiUrl}/get-board/${id}`)
-      .then((response) => {
-        setBoardData(response.data.board);
-        const contributor = response.data.board.contributors.find(
-          (c) => c.author === currAuthor
-        );
-        if (contributor) {
-          setLastUpdate(contributor.lastUpdate ?? null);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching board data:", error);
-      });
+  var data = {
+    width: 50,
+    height: 50,
+    delay: 5,
+    pixelSize: computePixelSize(50),
+    colors: ["#131313", "#ffffff", "#ff0000", "#00ff00", "#0000ff"],
+  };
 
-    // Subscribe to 'added-log' event once when component mounts
-    socket.on("added-log", HandleSetLogs);
-    // Clean up socket event listener when component unmounts
-    return () => {
-      socket.off("added-log", HandleSetLogs);
-      socket.emit("leaveRoom", id);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (boardData) {
-      socket.emit("joinBoard", id);
+  const generateInitialGrid = (rows, cols, defaultColor) => {
+    const grid = [];
+    for (let i = 0; i < rows; i++) {
+      const row = new Array(cols).fill(defaultColor);
+      grid.push(row);
     }
-  }, [boardData]);
+    return grid;
+  };
 
-  return boardData ? (
-    <div className="pixelBoard">
-      <div className="windows">
-        <div className="gridNav">
-          <Grid
-            boardData={boardData}
-            selectedColor={selectedColor}
-            lastUpdate={lastUpdate}
-            setLastUpdate={setLastUpdate}
-            currAuthor={currAuthor}
-            apiUrl={apiUrl}
-            socket={socket}
-          />
-        </div>
-        <div className="stats">
-          <StatsNav logs={logs} />
-        </div>
+  const [selectedColor, setSelectedColor] = useState("#ffffff");
+  const [boardData] = useState(data);
+  const [grid, setGrid] = useState(
+    generateInitialGrid(boardData.height, boardData.width, selectedColor)
+  );
+  const [logs, setLogs] = useState([]);
+  const [canPlace, setCanPlace] = useState(false);
+
+  useEffect(() => {
+    setGrid((prevGrid) => {
+      const newGrid = [...prevGrid];
+      newGrid[0][0] = "#fff";
+      return newGrid;
+    });
+  }, [boardData, selectedColor]);
+
+  const onCooldownComplete = () => {
+    setCanPlace(true);
+  };
+
+  return (
+    <div className='pixelBoard'>
+      <div className='d-flex justify-content-center m-auto'>
+        <Grid boardData={boardData} selectedColor={selectedColor} grid={grid} />
       </div>
-      <div className="colorPicker">
-        <ColorPicker picked={selectedColor} setPicked={setSelectedColor} />
+      <div className='stats'>
+        <StatsNav logs={logs} />
       </div>
+      <ColorPicker
+        colors={data.colors}
+        picked={selectedColor}
+        setPicked={setSelectedColor}
+        delay={data.delay}
+        canPlace={canPlace}
+        onCooldownComplete={onCooldownComplete}
+      />
     </div>
-  ) : (
-    <>
-      <p> There is nothing to paint on {"😞"} ... </p>
-    </>
   );
 }
 
