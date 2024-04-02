@@ -1,8 +1,9 @@
 import React from "react";
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from "reactstrap";
-import { FaHome, FaRedditAlien, FaSignInAlt, FaHammer, FaPaintRoller } from "react-icons/fa";
+import { FaHome, FaRedditAlien, FaSignInAlt, FaHammer } from "react-icons/fa";
+import PropTypes from "prop-types";
 
-function NavigationBar() {
+function NavigationBar({isAdmin}) {
   return (
     <Navbar expand='md' color='primary'>
       <NavbarBrand href='/' style={{ color: "white", fontWeight: "bold" }}>
@@ -30,14 +31,20 @@ function NavigationBar() {
             <FaSignInAlt style={{ marginRight: "5px" }} /> Signup
           </NavLink>
         </NavItem>
-        <NavItem>
-          <NavLink href='/admin' style={{ color: "white" }}>
-            <FaHammer style={{ marginRight: "5px" }} /> Admin
-          </NavLink>
-        </NavItem>
+        {isAdmin ? (
+          <NavItem>
+            <NavLink href='/admin' style={{ color: "white" }}>
+              <FaHammer style={{ marginRight: "5px" }} /> Admin
+            </NavLink>
+          </NavItem>
+        ) : null}
       </Nav>
     </Navbar>
   );
 }
+
+NavigationBar.propTypes = {
+  isAdmin: PropTypes.bool.isRequired,
+};
 
 export default NavigationBar;

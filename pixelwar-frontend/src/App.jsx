@@ -109,6 +109,14 @@ function Layout() {
     setTheme(newTheme);
   };
 
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    // API call to fetch user role
+    const userRole = false;
+    setUserRole(userRole);
+  }, []);
+
   return (
 <<<<<<< HEAD
     <ThemeContext.Provider
