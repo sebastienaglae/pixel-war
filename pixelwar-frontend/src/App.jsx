@@ -86,11 +86,19 @@ function Layout() {
     setTheme(newTheme);
   };
 
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    // API call to fetch user role
+    const userRole = false;
+    setUserRole(userRole);
+  }, []);
+
   return (
     <ThemeContext.Provider
       value={{ theme, setTheme: manualSetTheme, themePreference }}
     >
-      <NavigationBar />
+      <NavigationBar isAdmin={userRole}/>
       <Outlet />
     </ThemeContext.Provider>
   );
