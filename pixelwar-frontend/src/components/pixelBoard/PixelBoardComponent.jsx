@@ -6,8 +6,8 @@ import StatsNav from "./StatsNav/StatsNav";
 
 function PixelBoardComponent() {
   const [selectedColor, setSelectedColor] = useState("#131313");
-  const width = 200;
-  const height = 200;
+  const width = 50;
+  const height = 50;
   return (
     <div className="pixelBoard">
       <div className="windows">
