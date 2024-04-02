@@ -1,0 +1,187 @@
+$white: #ffffff;
+$black: #000000;
+
+$theme-dark: (
+  "light": #ede0c4,
+  "dark": #131f23,
+  "primary": #ff4500,
+  "secondary": #1870f4,
+  "info": #26953d,
+  "success": #179c41,
+  "warning": #ecc419,
+  "danger": #ee0b38,
+  "background": #0b1416,
+  "background-secondary": #1a282d,
+  "text": $white
+);
+
+$theme-light: (
+  "light": #131f23,
+  "dark": #d3c098,
+  "primary": #ff4500,
+  "secondary": #1870f4,
+  "info": #26953d,
+  "success": #179c41,
+  "warning": #ecc419,
+  "danger": #ee0b38,
+  "background": #ede0c4,
+  "background-secondary": #b4a78b,
+  "text": $black
+);
+
+$themes: (
+  "dark": $theme-dark,
+  "light": $theme-light,
+);
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+@each $theme, $t in $themes {
+  .#{$theme}-mode {
+    @each $color, $value in $t {
+      .btn-#{$color} {
+        color: map-get($t, "text")  !important;
+        background-color: $value !important;
+      }
+
+      .bg-#{$color} {
+        background-color: $value !important;
+      }
+    }
+
+    .pagination {
+      .page-item.disabled .page-link {
+        background-color: map-get(
+          $t,
+          "background-secondary"
+        ) !important;
+      }
+
+      .page-item.active .page-link {
+        background-color: map-get($t, "primary") !important;
+      }
+
+      .page-link {
+        background-color: map-get($t, "primary") !important;
+        color: map-get($t, "text")  !important;
+      }
+    }
+
+    .dropdown-menu {
+      border-color: map-get($t, "primary") !important;
+      background-color: map-get($t, "background") !important;
+    }
+
+    .dropdown-item {
+      color: map-get($t, "text")  !important;
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+      color: map-get($t, "primary") !important;
+      background-color: map-get($t, "background-secondary") !important;
+    }
+
+    .dropdown-item.active,
+    .dropdown-item:active {
+      color: map-get($t, "primary") !important;
+      background-color: map-get($t, "background-secondary") !important;
+    }
+
+    .form-control {
+      background-color: map-get($t, "background") !important;
+      color: map-get($t, "text")  !important;
+      border-color: map-get($t, "text") !important;
+
+      &::placeholder {
+        color: map-get($t, "text")  !important;
+      }
+    }
+
+    .form-label {
+      color: map-get($t, "text") !important;
+    }
+
+    .form-select {
+      background-color: map-get($t, "background") !important;
+      color: map-get($t, "text") !important;
+      border-color: map-get($t, "text") !important;
+    }
+
+    .react-datetime-picker__button__icon {
+      stroke: map-get($t, "primary") !important;
+    }
+
+    .react-datetime-picker {
+      border-color: map-get($t, "text") !important;
+    }
+
+    .react-calendar {
+      border-radius: 5px;
+      border: 1px solid map-get($t, "primary") !important;
+    }
+
+    .react-calendar__tile--active {
+      background: map-get($t, "primary") !important;
+    }
+
+    .card-title {
+      color: map-get($t, "text") !important;
+    }
+
+    .card-text {
+      color: map-get($t, "text") !important;
+    }
+
+    .card-footer {
+      color: #7e7e7e !important;
+    }
+  }
+}
+
+body.dark-mode {
+  background-color: map-get($theme-dark, "background");
+  color: map-get($theme-dark, "text")  !important;
+}
+
+body.light-mode {
+  background-color: map-get($theme-light, "background");
+  color: map-get($theme-light, "text")  !important;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("./assets/fonts/Gotham-Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("./assets/fonts/Gotham-Bold.otf") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("./assets/fonts/Gotham-BookItalic.otf") format("opentype");
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Gotham";
+  src: url("./assets/fonts/Gotham-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+body {
+  font-family: "Gotham", sans-serif;
+}
+
+.react-datetime-picker {
+  border: 1px solid white !important;
+  border-radius: 5px;
+}
