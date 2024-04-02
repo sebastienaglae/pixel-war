@@ -1,0 +1,59 @@
+.pixelBoard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.windows {
+  position: relative; /* Add relative positioning */
+  width: 100%;
+  height: 89%;
+}
+
+.colorPicker {
+  flex-grow: 1;
+  height: 11%;
+  min-height: 80px;
+  max-height: 85px;
+  overflow: scroll;
+  width: 100%;
+}
+
+.window1 {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+
+.gridNav {
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: scroll;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.gridNav::-webkit-scrollbar {
+  display: none;
+}
+
+.stats {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: fit-content;
+  min-width: 20px;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  z-index: 999; /* Ensure it's above other content */
+}

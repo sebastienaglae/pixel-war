@@ -1,23 +1,18 @@
 import { Button } from "reactstrap";
-import { useContext } from "react";
-import { ThemeContext } from "../App";
+import PixelBoardComponent from "@components/pixelBoard/PixelBoardComponent.jsx";
 
 function TestPage() {
-    const themeContext = useContext(ThemeContext);
-    return (
-      <div>
-        <Button
-          color='primary'
-          onClick={() =>
-            themeContext.theme == "light"
-              ? themeContext.setTheme("dark")
-              : themeContext.setTheme("light")
-          }
-        >
-          {themeContext.theme}
-        </Button>
+  return (
+    <div style={{ width: "100%", height: "92%" }}>
+      <div style={{ width: "100%", height: "15%" }}>
+        <h1>Test Page</h1>
+        <Button color="primary">Primary</Button>
       </div>
-    );
+      <div style={{ width: "100%", height: "85%" }}>
+        <PixelBoardComponent />
+      </div>
+    </div>
+  );
 }
 
 export default TestPage;

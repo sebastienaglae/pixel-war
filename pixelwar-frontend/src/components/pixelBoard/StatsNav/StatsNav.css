@@ -1,0 +1,25 @@
+.statsNav {
+  font-size: large;
+  border: solid 1px #000;
+  background-color: blueviolet;
+  border-radius: 100%;
+  padding: 6px 10px;
+  color: white;
+}
+
+.statsNav:hover {
+  cursor: pointer;
+}
+
+.statsNav:active {
+  background-color: white;
+  color: blueviolet;
+}
+
+.menu {
+  background-color: white;
+  border-radius: 10%;
+  border: double 8px blueviolet;
+
+  padding: 8px;
+}
