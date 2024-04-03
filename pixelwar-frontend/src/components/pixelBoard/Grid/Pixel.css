@@ -1,0 +1,8 @@
+.pixel {
+  border: dashed 1px rgb(179, 186, 249);
+}
+
+.pixel:hover {
+  cursor: pointer;
+  border: solid 1px lightcoral;
+}
