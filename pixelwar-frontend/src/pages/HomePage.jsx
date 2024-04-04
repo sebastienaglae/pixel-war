@@ -1,4 +1,5 @@
 import React,{ useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Row, Col, Card, CardBody, CardHeader, CardTitle, CardText, Button, Carousel, CarouselItem, CarouselControl } from "reactstrap";
 
 function HomePage() {
@@ -48,6 +49,12 @@ function HomePage() {
         { id: 13, title: "Board 8", description: "Description of finished board 8" }
     ];
 
+    const navigate = useNavigate();
+
+    const handleButtonClick = (boardId) => {
+        navigate('/board/' + boardId);
+      };
+
     return (
         <div>
             <h1 className="text-center">Home Page</h1>
@@ -88,7 +95,7 @@ function HomePage() {
                                     <CardBody>
                                         <CardTitle tag="h5">{item.title}</CardTitle>
                                         <CardText>{item.description}</CardText>
-                                        <Button>Open</Button>
+                                        <Button onClick={() => handleButtonClick(item.id)}>Open</Button>
                                     </CardBody>
                                 </Card>
                             </Col>
@@ -118,7 +125,7 @@ function HomePage() {
                                         <CardBody>
                                             <CardTitle tag="h5">{item.title}</CardTitle>
                                             <CardText>{item.description}</CardText>
-                                            <Button>Open</Button>
+                                            <Button onClick={() => handleButtonClick(item.id)}>Open</Button>
                                         </CardBody>
                                     </Card>
                                 </Col>
