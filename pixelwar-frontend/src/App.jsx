@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "@pages/HomePage";
 import BoardPage from "@pages/BoardPage";
 import CreatePage from "@pages/CreatePage";
@@ -26,11 +26,11 @@ function App() {
         <Route path="/find_board" element={<FindBoardPage />} />
         <Route path="/board/:id" element={<BoardPage />} />
         <Route path="/create_board" element={<CreatePage />} />
-        <Route path='/admin/create-board' element={<CreateBoardPage />} />
-        <Route path='/admin/edit-board/:boardId' element={<EditBoardPage />} />
-        <Route path='/admin' element={<PixelBoardListPage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/signup' element={<SignupPage />} />
+        <Route path="/admin/create-board" element={<ProtectedRoute component={<CreateBoardPage />} />} />
+        <Route path="/admin/edit-board/:boardId" element={<ProtectedRoute component={<EditBoardPage />} />} />
+        <Route path="/admin" element={<ProtectedRoute component={<PixelBoardListPage />} />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
       </Route>
     </Routes>
   );
@@ -81,7 +81,7 @@ function Layout() {
 
   useEffect(() => {
     // API call to fetch user role
-    const userRole = false;
+    const userRole = true;
     setUserRole(userRole);
   }, []);
 
@@ -89,10 +89,27 @@ function Layout() {
     <ThemeContext.Provider
       value={{ theme, setTheme: manualSetTheme, themePreference }}
     >
-      <NavigationBar isAdmin={userRole}/>
+      <NavigationBar isAdmin={userRole} />
       <Outlet />
     </ThemeContext.Provider>
   );
+}
+
+function ProtectedRoute({ component }) {
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    // API call to fetch user role
+    const userRole = true;
+    setUserRole(userRole);
+  }, []);
+
+  if (userRole) {
+    return component;
+  } else {
+    // If user is not an admin, redirect them to another page
+    return <Navigate to="/login" />;
+  }
 }
 
 export default App;
