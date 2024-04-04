@@ -19,16 +19,35 @@ export const ThemeContext = createContext({
 });
 
 function App() {
+
+  const [userRole, setUserRole] = useState(true);
+
+  useEffect(() => {
+    // API call to fetch user role
+    // const fetchUserRole = async () => {
+    //   try {
+    //     const response = await fetch("<API_URL>/api/user/role");
+    //     const data = await response.json();
+    //     setUserRole(data.isAdmin);
+    //   }
+    //   catch (error) {
+    //     console.error("Error fetching user role: ", error);
+    //   }
+    // }
+        
+    setUserRole(false);
+  }, []);
+
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path="/" element={<Layout userRole={userRole} />}>
         <Route index element={<HomePage />} />
         <Route path="/find_board" element={<FindBoardPage />} />
         <Route path="/board/:id" element={<BoardPage />} />
         <Route path="/create_board" element={<CreatePage />} />
-        <Route path="/admin/create-board" element={<ProtectedRoute component={<CreateBoardPage />} />} />
-        <Route path="/admin/edit-board/:boardId" element={<ProtectedRoute component={<EditBoardPage />} />} />
-        <Route path="/admin" element={<ProtectedRoute component={<PixelBoardListPage />} />} />
+        <Route path="/admin/create-board" element={<ProtectedRoute userRole={userRole} component={<CreateBoardPage />} />} />
+        <Route path="/admin/edit-board/:boardId" element={<ProtectedRoute userRole={userRole} component={<EditBoardPage />} />} />
+        <Route path="/admin" element={<ProtectedRoute userRole={userRole} component={<PixelBoardListPage />} />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
       </Route>
@@ -36,7 +55,7 @@ function App() {
   );
 }
 
-function Layout() {
+function Layout({userRole}) {
   const [theme, setTheme] = useState();
   const [themePreference, setThemePreference] = useState();
 
@@ -77,14 +96,6 @@ function Layout() {
     setTheme(newTheme);
   };
 
-  const [userRole, setUserRole] = useState(null);
-
-  useEffect(() => {
-    // API call to fetch user role
-    const userRole = true;
-    setUserRole(userRole);
-  }, []);
-
   return (
     <ThemeContext.Provider
       value={{ theme, setTheme: manualSetTheme, themePreference }}
@@ -95,19 +106,10 @@ function Layout() {
   );
 }
 
-function ProtectedRoute({ component }) {
-  const [userRole, setUserRole] = useState(null);
-
-  useEffect(() => {
-    // API call to fetch user role
-    const userRole = true;
-    setUserRole(userRole);
-  }, []);
-
+function ProtectedRoute({ userRole, component }) {
   if (userRole) {
     return component;
   } else {
-    // If user is not an admin, redirect them to another page
     return <Navigate to="/login" />;
   }
 }
