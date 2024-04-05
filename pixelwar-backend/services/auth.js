@@ -18,11 +18,11 @@ const comparePassword = (password, hash) => {
 }
 
 passport.use("local", new LocalStrategy({
-        usernameField: 'email',
+        usernameField: 'nickname',
         passwordField: 'password'
     },
-    function (email, password, cb) {
-        return UserModel.findOne({email})
+    function (nickname, password, cb) {
+        return UserModel.findOne({nickname})
             .then(user => {
                 if (!user) {
                     return cb(null, false, {message: 'Incorrect email or password.'});
