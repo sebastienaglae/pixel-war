@@ -42,7 +42,18 @@ const Board = new Schema({
             },
             message: props => `${props.value} is not a valid color`
         }
-    }]
+    }],
+    mode: {
+        type: String,
+        required: true,
+        enum: ['no-overwrite', 'allow-overwrite']
+    },
+    delay: {
+        type: Number,
+        required: true,
+        min: 0,
+        max: 3600
+    }
 })
 
 module.exports = mongoose.model("Board", Board);

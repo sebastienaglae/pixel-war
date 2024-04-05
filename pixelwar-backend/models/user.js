@@ -29,13 +29,7 @@ const User = new Schema({
             ref: "Board"
         },
         pixels: Number
-    }],
-    theme: {
-        type: String,
-        default: "white",
-        required: true,
-        enum: ["white", "dark"]
-    }
+    }]
 })
 
 module.exports = mongoose.model("User", User);

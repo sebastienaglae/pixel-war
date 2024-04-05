@@ -1,19 +1,8 @@
 import { useState } from "react";
 import "./Pixel.css";
 
-function Pixel({ selectedColor, color, x, y, boardData }) {
+function Pixel({ selectedColor, color, x, y, boardData, onPixelPlace }) {
   const [isHover, setIsHover] = useState(false);
-
-  const submitPixelColor = () => {
-    console.log(
-      "Submit pixel color at x:",
-      x,
-      "y:",
-      y,
-      "color:",
-      selectedColor
-    );
-  };
 
   return (
     <div
@@ -25,7 +14,7 @@ function Pixel({ selectedColor, color, x, y, boardData }) {
       }}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      onClick={submitPixelColor}
+      onClick={() => onPixelPlace(x, y)}
     ></div>
   );
 }

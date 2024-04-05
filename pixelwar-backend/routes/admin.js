@@ -1,9 +1,31 @@
 const express = require('express');
+const BoardService = require('../services/board');
+const BoardMdl = require('../models/board');
+const UserMdl = require('../models/user');
+
 const router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/stats', async (req, res, next) => {
+    res.status(200).json({
+        users: UserMdl.countDocuments(),
+        boards: BoardMdl.countDocuments()
+    });
+});
+
+router.delete('/boards/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const board = await BoardMdl.findById(id);
+    if (!board) {
+        return res.status(404).json({ error: 'Board not found' });
+    }
+
+    BoardService.remove(id, board.owner)
+        .then(() => {
+            res.status(204).end();
+        })
+        .catch(err => {
+            res.status(500).json({ error: err.message });
+        });
 });
 
 module.exports = router;

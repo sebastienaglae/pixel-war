@@ -11,7 +11,14 @@ function BoardPage() {
     mode: "no-overwrite",
   };
   const { id } = useParams(); // Access id from URL
-    const [timer, setTimer] = useState("");
+  const [timer, setTimer] = useState("");
+  const colorTable = [
+    '#FFFFFF',
+    '#000000',
+    '#FF0000',
+    '#00FF00',
+    '#0000FF'
+  ];
 
   const calculateTimeLeft = () => {
     const now = new Date();
@@ -40,7 +47,7 @@ function BoardPage() {
     <Container className='my-5'>
       <h2 className='text-center mb-5'>{data.title}</h2>
       <p className='text-center'>Temps restant: {timer}</p>
-      <PixelBoardComponent id={id} />
+      <PixelBoardComponent id={id} colorTable={colorTable} />
     </Container>
   );
 }

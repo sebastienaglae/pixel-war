@@ -11,8 +11,7 @@ const renderInfo = (id, res) => {
                 id: user._id,
                 email: user.email,
                 nickname: user.nickname,
-                contributions: user.contributions,
-                theme: user.theme
+                contributions: user.contributions
             });
         })
         .catch(err => {
@@ -28,12 +27,12 @@ router.get('/:id', AuthService.RequireJWT, function(req, res, next) {
     renderInfo(req.params.id, res);
 });
 router.put('/me', AuthService.RequireJWT, function(req, res, next) {
-    const { nickname, theme } = req.body;
-    if (!nickname && !theme) {
+    const { nickname } = req.body;
+    if (!nickname) {
         return res.status(400).json({error: 'No valid fields to update.'});
     }
 
-    UserMdl.findByIdAndUpdate(req.user.id, { nickname, theme })
+    UserMdl.findByIdAndUpdate(req.user.id, { nickname })
         .then(() => {
             renderInfo(req.user.id, res);
         })
