@@ -4,6 +4,7 @@ import BoardPage from "@pages/BoardPage";
 import CreatePage from "@pages/CreatePage";
 import FindBoardPage from "./pages/FindBoardPage";
 import LoginPage from "@pages/LoginPage";
+import UserProfilePage from "@pages/UserProfilePage";
 import SignupPage from "@pages/SignupPage";
 import { Outlet } from "react-router-dom";
 import NavigationBar from "./components/common/NavigationBar";
@@ -45,6 +46,7 @@ function App() {
         <Route path="/find_board" element={<FindBoardPage />} />
         <Route path="/board/:id" element={<BoardPage />} />
         <Route path="/create_board" element={<CreatePage />} />
+        <Route path="/profile" element={<ProtectedRoute userRole={userRole} component={<UserProfilePage />} />} />
         <Route path="/admin/create-board" element={<ProtectedRoute userRole={userRole} component={<CreateBoardPage />} />} />
         <Route path="/admin/edit-board/:boardId" element={<ProtectedRoute userRole={userRole} component={<EditBoardPage />} />} />
         <Route path="/admin" element={<ProtectedRoute userRole={userRole} component={<PixelBoardListPage />} />} />
