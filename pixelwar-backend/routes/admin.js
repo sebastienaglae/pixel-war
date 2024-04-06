@@ -5,13 +5,6 @@ const UserMdl = require('../models/user');
 
 const router = express.Router();
 
-router.get('/stats', async (req, res, next) => {
-    res.status(200).json({
-        users: UserMdl.countDocuments(),
-        boards: BoardMdl.countDocuments()
-    });
-});
-
 router.delete('/boards/:id', async (req, res, next) => {
     const { id } = req.params;
     const board = await BoardMdl.findById(id);
