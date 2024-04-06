@@ -2,31 +2,31 @@ $white: #ffffff;
 $black: #000000;
 
 $theme-dark: (
-  "light": #F6F6F2,
+  "light": #f6f6f2,
   "dark": #131f23,
   "primary": #ff4500,
-  "secondary": #72BCFE,
+  "secondary": #72bcfe,
   "info": #26953d,
   "success": #179c41,
   "warning": #ecc419,
   "danger": #ee0b38,
-  "background": #2b2d2e,
+  "background": #0b1416,
   "background-secondary": #1a282d,
-  "text": $white
+  "text": $white,
 );
 
 $theme-light: (
   "light": #131f23,
   "dark": #d3c098,
   "primary": #ff4500,
-  "secondary": #DFDF90,
+  "secondary": #dfdf90,
   "info": #26953d,
   "success": #179c41,
   "warning": #ecc419,
   "danger": #ee0b38,
-  "background": #EEEEE1,
-  "background-secondary": #E2E2CB,
-  "text": $black
+  "background": #ebe0c7,
+  "background-secondary": #b4a78b,
+  "text": $black,
 );
 
 $themes: (
@@ -36,11 +36,17 @@ $themes: (
 
 @import "../node_modules/bootstrap/scss/bootstrap";
 
+#root,
+body {
+  height: 100vh;
+  min-width: 500px;
+}
+
 @each $theme, $t in $themes {
   .#{$theme}-mode {
     @each $color, $value in $t {
       .btn-#{$color} {
-        color: map-get($t, "text")  !important;
+        color: map-get($t, "text") !important;
         background-color: $value !important;
       }
 
@@ -49,12 +55,15 @@ $themes: (
       }
     }
 
+    @each $color, $value in $t {
+      .border-#{$color} {
+        border-color: $value !important;
+      }
+    }
+
     .pagination {
       .page-item.disabled .page-link {
-        background-color: map-get(
-          $t,
-          "background-secondary"
-        ) !important;
+        background-color: map-get($t, "background-secondary") !important;
       }
 
       .page-item.active .page-link {
@@ -63,7 +72,7 @@ $themes: (
 
       .page-link {
         background-color: map-get($t, "primary") !important;
-        color: map-get($t, "text")  !important;
+        color: map-get($t, "text") !important;
       }
     }
 
@@ -73,7 +82,7 @@ $themes: (
     }
 
     .dropdown-item {
-      color: map-get($t, "text")  !important;
+      color: map-get($t, "text") !important;
     }
 
     .dropdown-item:hover,
@@ -90,11 +99,11 @@ $themes: (
 
     .form-control {
       background-color: map-get($t, "background") !important;
-      color: map-get($t, "text")  !important;
+      color: map-get($t, "text") !important;
       border-color: map-get($t, "text") !important;
 
       &::placeholder {
-        color: map-get($t, "text")  !important;
+        color: map-get($t, "text") !important;
       }
     }
 
@@ -129,12 +138,20 @@ $themes: (
       color: map-get($t, "text") !important;
     }
 
+    .card-header {
+      color: map-get($t, "text") !important;
+    }
+
     .card-text {
       color: map-get($t, "text") !important;
     }
 
     .card-footer {
       color: #7e7e7e !important;
+    }
+
+    .card-body {
+      color: map-get($t, "text") !important;
     }
   }
 }
@@ -148,44 +165,6 @@ body.light-mode {
   background-color: map-get($theme-light, "background");
   color: map-get($theme-light, "text") !important;
 }
-
-.profile-card {
-  background-color: map-get(map-get($themes, 'light'), 'background-secondary');
-  color: map-get(map-get($themes, 'light'), 'text');
-
-  &.dark {
-      background-color: map-get(map-get($themes, 'dark'), 'background-secondary');
-      color: map-get(map-get($themes, 'dark'), 'text');
-  }
-}
-
-.boards-card {
-  background-color: map-get(map-get($themes, 'light'), 'background');
-  color: map-get(map-get($themes, 'light'), 'text');
-
-  &.dark {
-      background-color: map-get(map-get($themes, 'dark'), 'background-secondary');
-      color: map-get(map-get($themes, 'dark'), 'text');
-  }
-}
-
-.total-pixels-header {
-  color: map-get(map-get($themes, 'light'), 'text');
-
-  &.dark {
-    color: map-get(map-get($themes, 'dark'), 'text') 
-  }
-}
-
-
-.board-card {
-  background-color: map-get(map-get($themes, 'light'), 'background-secondary');
-
-  &.dark {
-      background-color: map-get(map-get($themes, 'dark'), 'background');
-  }
-}
-
 
 @font-face {
   font-family: "Gotham";

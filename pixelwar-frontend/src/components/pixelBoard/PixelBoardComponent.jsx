@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
 import "./PixelBoardComponent.css";
-import Grid from "./Grid/Grid";
-import ColorPicker from "./ColorPicker/ColorPicker";
-import StatsNav from "./StatsNav/StatsNav";
+import Grid from "@components/pixelBoard/Grid/Grid";
+import ColorPicker from "@components/pixelBoard/ColorPicker/ColorPicker";
+import StatsNav from "@components/pixelBoard/StatsNav/StatsNav";
 
-function PixelBoardComponent({ id }) {
-  const computePixelSize = (rowCount) => {
-    return Math.min(25, Math.floor((window.innerHeight * 0.7) / rowCount));
+function PixelBoardComponent({ id, loading }) {
+  const computePixelSize = (rowCount, columnCount) => {
+    const maxSizeBasedOnHeight = Math.floor(
+      (window.innerHeight * 0.7) / rowCount
+    );
+    const maxSizeBasedOnWidth = Math.floor(
+      (window.innerWidth * 0.7) / columnCount
+    );
+
+    return Math.min(25, maxSizeBasedOnHeight, maxSizeBasedOnWidth);
   };
 
   var data = {
     width: 50,
     height: 50,
     delay: 5,
-    pixelSize: computePixelSize(50),
+    pixelSize: computePixelSize(50, 50),
     colors: ["#131313", "#ffffff", "#ff0000", "#00ff00", "#0000ff"],
   };
 
@@ -32,7 +39,23 @@ function PixelBoardComponent({ id }) {
     generateInitialGrid(boardData.height, boardData.width, selectedColor)
   );
   const [logs, setLogs] = useState([]);
-  const [canPlace, setCanPlace] = useState(false);
+  const [canPlace, setCanPlace] = useState(true);
+
+  //oresize recompute pixel size
+  useEffect(() => {
+    const handleResize = () => {
+      const newSize = computePixelSize(boardData.height, boardData.width);
+      data.pixelSize = newSize;
+      setGrid((prevGrid) => {
+        const newGrid = [...prevGrid];
+        newGrid[0][0] = "#fff";
+        return newGrid;
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [boardData]);
 
   useEffect(() => {
     setGrid((prevGrid) => {
@@ -47,13 +70,11 @@ function PixelBoardComponent({ id }) {
   };
 
   return (
-    <div className='pixelBoard'>
+    <div className='pixelBoard d-flex flex-column w-100 h-100'>
       <div className='d-flex justify-content-center m-auto'>
         <Grid boardData={boardData} selectedColor={selectedColor} grid={grid} />
       </div>
-      <div className='stats'>
-        <StatsNav logs={logs} />
-      </div>
+      <StatsNav logs={logs} />
       <ColorPicker
         colors={data.colors}
         picked={selectedColor}
@@ -61,6 +82,7 @@ function PixelBoardComponent({ id }) {
         delay={data.delay}
         canPlace={canPlace}
         onCooldownComplete={onCooldownComplete}
+        loading={loading}
       />
     </div>
   );

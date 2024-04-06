@@ -1,25 +1,15 @@
-.statsNav {
-  font-size: large;
-  border: solid 1px #000;
-  background-color: blueviolet;
-  border-radius: 100%;
-  padding: 6px 10px;
-  color: white;
-}
-
-.statsNav:hover {
+.statsNav:hover,
+.toggleClose:hover {
   cursor: pointer;
 }
 
-.statsNav:active {
-  background-color: white;
-  color: blueviolet;
-}
-
-.menu {
-  background-color: white;
-  border-radius: 10%;
-  border: double 8px blueviolet;
-
-  padding: 8px;
+.stats {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: fit-content;
+  min-width: 20px;
+  background-color: transparent;
+  z-index: 999;
 }

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./SelectComponent.css";
 
 function SelectComponent(props) {
   const { setter, apiUrl } = props;
