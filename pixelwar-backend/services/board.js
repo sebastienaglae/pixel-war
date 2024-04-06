@@ -5,6 +5,8 @@ const Jimp = require("jimp");
 const boardHeaderSize = 4; // 2 bytes for sizeX, 2 bytes for sizeY
 
 const boardKey = (id) => `board:${id}`;
+const boardUserLastPlaceKey = (id) => `board:${id}:place-time`; // user last place time, used to rate limit user
+const boardHeatmapKey = (id) => `board:${id}:place-heatmap`;
 const boardThumbnailKey = (id) => `board:${id}:thumbnail`;
 
 
@@ -128,8 +130,12 @@ module.exports = {
     remove: async (id, owner) => {
         const success = await BoardMdl.deleteOne({ _id: id, owner });
         if (!success || success.deletedCount === 0) return false;
+
         await client.del(boardKey(id));
         await client.del(boardThumbnailKey(id));
+        await client.del(boardHeatmapKey(id));
+        await client.del(boardUserLastPlaceKey(id));
+
         await client.publish(eventBoardDeleted, JSON.stringify({ id }));
         return true;
     },
@@ -138,31 +144,56 @@ module.exports = {
         if (!buf) return null;
         return buf;
     },
-    setPixel: async (id, pixelIndex, color) => {
+    setPixel: async (id, pixelIndex, color, userId) => {
         color++;
         if (color < 1 || color >= 0xFF) throw new Error('Invalid color');
         if (pixelIndex < 0) throw new Error('Invalid pixelIndex');
 
-        const header = await BoardMdl.findById(id, { colors: 1 });
+        const header = await BoardMdl.findById(id, { colors: 1, resolution: 1, mode: 1, delay: 1 });
         if (!header) return null;
 
-        if (color - 1 >= header.colors.length) {
-            throw new Error('Invalid color');
+        if (color - 1 >= header.colors.length) throw new Error('Invalid color');
+        if (pixelIndex >= header.resolution.x * header.resolution.y) throw new Error('Invalid pixelIndex');
+
+        if (header.mode === 'no-overwrite') {
+            const existingColor = await client.bitfield(boardKey(id), 'GET', 'u8', (boardHeaderSize + pixelIndex) * 8);
+            if (existingColor) throw new Error('Pixel already set');
         }
-        if (pixelIndex >= header.resolution.x * header.resolution.y) {
-            throw new Error('Invalid pixelIndex');
+
+        if (userId) {
+            const lastPlaceTime = await client.hget(boardUserLastPlaceKey(id), userId);
+            if (lastPlaceTime) {
+                const lastPlaceTimeDate = new Date(lastPlaceTime);
+                const now = new Date();
+                const diff = now - lastPlaceTimeDate;
+                if (diff < header.delay * 1000) {
+                    throw new Error('Rate limited');
+                }
+            }
         }
 
         const result = await client.bitfield(boardKey(id), 'SET', 'u8', (boardHeaderSize + pixelIndex) * 8, color);
-        if (!result) return null;
+        if (!result) throw new Error('Failed to set pixel');
+
+        // set heatmap
+        await client.zincrby(boardHeatmapKey(id), 1, pixelIndex);
+        // set user last place time
+        if (userId) {
+            await client.hset(boardUserLastPlaceKey(id), userId, new Date().toUTCString());
+        }
+
         await publish(eventBoardUpdated, id, { pixelIndex, color: color});
+
+        return header.delay;
     },
-    subscribe: async (id, callback) => {
+    subscribe: async (id, callback, userId) => {
         if (!(callback instanceof Object)) throw new Error('Invalid callback');
         if (typeof callback.onResize !== 'function') throw new Error('Invalid callback');
         if (typeof callback.onPixelUpdate !== 'function') throw new Error('Invalid callback');
         if (typeof callback.onDelete !== 'function') throw new Error('Invalid callback');
         if (typeof callback.onPixelsData !== 'function') throw new Error('Invalid callback');
+        if (typeof callback.onHeaderUpdate !== 'function') throw new Error('Invalid callback');
+        if (typeof callback.onPersonalDelayChange !== 'function') throw new Error('Invalid callback');
 
         if (!subscriptions.has(id)) {
             subscriptions.set(id, new Set());
@@ -176,8 +207,27 @@ module.exports = {
             return false;
         }
 
+        if (userId) {
+            const header = await BoardMdl.findById(id, { delay: 1 });
+            if (!header) {
+                module.exports.unsubscribe(id, callback);
+                return false;
+            }
+
+            const lastPlaceTime = await client.hget(boardUserLastPlaceKey(id), userId);
+            if (lastPlaceTime) {
+                const lastPlaceTimeDate = new Date(lastPlaceTime);
+                const now = new Date();
+                const diff = now - lastPlaceTimeDate;
+                if (diff < header.delay * 1000) {
+                    throw new Error('Rate limited');
+                }
+            }
+        }
+
         const buf = Buffer.from(pixels);
         callback.onPixelsData(buf[0] | buf[1] << 8, buf[2] | buf[3] << 8, buf.subarray(boardHeaderSize));
+
         return true;
     },
     unsubscribe: (id, callback) => {
