@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import {
   Button,
@@ -14,7 +13,7 @@ import {
 import DateTimePicker from "react-datetime-picker";
 import ColorItem from "./ColorItem";
 
-function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
+function PixelBoardForm({ initialData = {}, onSubmit, error = "", isEdit = false }) {
   const [pixelBoard, setPixelBoard] = useState({
     name: "",
     resolution: {
@@ -22,9 +21,10 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
       y: 0,
     },
     colors: [],
+    delay: 0,
     startAt: new Date(),
     endAt: new Date(),
-    mode: "",
+    mode: "allow-overwrite",
     ...initialData,
   });
 
@@ -85,7 +85,7 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
   return (
     <Container>
       <Row>
-        <Col sm='12' md={{ size: 6, offset: 3 }}>
+        <Col >
           <Form onSubmit={handleSubmit}>
             <FormGroup>
               <Label for='name'>Nom</Label>
@@ -139,9 +139,10 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
                 value={pixelBoard.mode}
                 onChange={handleChange}
                 required
+                disabled={isEdit}
               >
                 <option value=''>Sélectionnez un mode</option>
-                <option value='overwrite'>
+                <option value='allow-overwrite'>
                   Autoriser le dessin sur pixels existants
                 </option>
                 <option value='no-overwrite'>
@@ -158,6 +159,7 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
                     id={index + 1}
                     onColorChange={(id, color) => onColorChange(id - 1, color)}
                     value={color}
+                    disabled={isEdit}
                     onDelete={(id) => onDeleteColor(id - 1)}
                   />
                 ))}
@@ -165,11 +167,26 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "" }) {
                   color='primary'
                   onClick={() => addColor(getRandomColor())}
                   className='mt-2'
+                  disabled={pixelBoard.colors.length >= 15 || isEdit}
                 >
                   Ajouter une couleur
                 </Button>
                 <small>Entre 1 et 15 couleurs</small>
               </Card>
+            </FormGroup>
+            <FormGroup>
+              <Label>Delai</Label>
+              <Input
+                type='number'
+                name='delay'
+                id='delay'
+                min={1}
+                max={1000}
+                value={pixelBoard.delay}
+                onChange={handleChange}
+                required
+              />
+              <small>Doit être compris entre 1 et 3600 secondes</small>
             </FormGroup>
             <FormGroup>
               <Label>Date de création</Label>

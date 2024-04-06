@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Container,
@@ -117,7 +117,7 @@ function SignupPage() {
                   type='submit'
                   disabled={!passwordsMatch}
                 >
-                  Se connecter
+                  S&apos;inscrire
                 </Button>
               </Form>
             </CardBody>

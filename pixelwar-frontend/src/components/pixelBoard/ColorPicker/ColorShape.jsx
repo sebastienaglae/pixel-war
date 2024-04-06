@@ -1,16 +1,9 @@
 import "./ColorShape.css";
 
-function ColorShape(props) {
-  const { picked, color, setColor } = props;
-  return picked === color ? (
+function ColorShape({ picked, color, setColor }) {
+  return (
     <div
-      className="shape selected"
-      onClick={() => setColor(color)}
-      style={{ backgroundColor: color }}
-    ></div>
-  ) : (
-    <div
-      className="shape"
+      className={picked === color ? "shape selected" : "shape"}
       onClick={() => setColor(color)}
       style={{ backgroundColor: color }}
     ></div>

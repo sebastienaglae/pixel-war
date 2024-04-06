@@ -1,7 +1,8 @@
 import PixelBoardComponent from "@components/pixelBoard/PixelBoardComponent";
 import { useParams } from "react-router-dom";
-import { Container } from "reactstrap";
+import { Container, Placeholder } from "reactstrap";
 import { useEffect, useState } from "react";
+import { useApi } from "@hooks/api";
 
 function BoardPage() {
   const data = {
@@ -9,9 +10,14 @@ function BoardPage() {
     date: "2025-09-01",
     delay: "5",
     mode: "no-overwrite",
+    resolution: {
+      x: 10,
+      y: 10,
+    }
   };
   const { id } = useParams(); // Access id from URL
-    const [timer, setTimer] = useState("");
+  const [timer, setTimer] = useState("");
+  const { loading } = useApi(`/boards/${id}`);
 
   const calculateTimeLeft = () => {
     const now = new Date();
@@ -38,9 +44,27 @@ function BoardPage() {
 
   return (
     <Container className='my-5'>
-      <h2 className='text-center mb-5'>{data.title}</h2>
-      <p className='text-center'>Temps restant: {timer}</p>
-      <PixelBoardComponent id={id} />
+      <h2 className='text-center mb-5'>
+        <Placeholder animation={loading ? null : "wave"}>
+          {data.title}
+        </Placeholder>
+      </h2>
+      <p className='text-center'>
+        <Placeholder animation={loading ? null : "wave"}>
+          Temps restant: {timer}
+        </Placeholder>
+      </p>
+      <p className='text-center'>
+        <Placeholder animation={loading ? null : "wave"}>
+          Le délai est de {data.delay} secondes
+        </Placeholder>
+      </p>
+      <p className='text-center'>
+        <Placeholder animation={loading ? null : "wave"}>
+          Taille: {data.resolution.x}x{data.resolution.y}
+        </Placeholder>
+      </p>
+      <PixelBoardComponent id={id} loading={loading} />
     </Container>
   );
 }

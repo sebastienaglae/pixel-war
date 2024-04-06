@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { InputGroup, Input, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -13,7 +13,7 @@ function SearchBar({ onSearch }) {
   return (
     <InputGroup className='mb-3 rounded'>
       <Input
-        placeholder='Search...'
+        placeholder='Rechercher...'
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className='rounded-start'

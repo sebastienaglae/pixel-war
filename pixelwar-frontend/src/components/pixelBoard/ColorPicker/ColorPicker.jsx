@@ -1,6 +1,6 @@
-import "./ColorPicker.css";
 import ColorShape from "@components/pixelBoard/ColorPicker/ColorShape";
 import { useEffect, useState } from "react";
+import { Placeholder } from "reactstrap";
 
 function ColorPicker({
   picked,
@@ -9,6 +9,7 @@ function ColorPicker({
   canPlace,
   delay,
   onCooldownComplete,
+  loading,
 }) {
   const [timer, setTimer] = useState(delay);
 
@@ -30,33 +31,35 @@ function ColorPicker({
   }, [timer, onCooldownComplete, canPlace]);
 
   return (
-    <div className='palette' style={{ position: "relative" }}>
-      {colors.map((color, index) => (
-        <div key={index}>
-          <ColorShape
-            picked={picked}
-            color={color}
-            setColor={() => canPlace && setPicked(color)}
-          />
-        </div>
-      ))}
-      {!canPlace && (
-        <div
-          className='bg-primary'
-          style={{
-            display: "flex",
-            position: "absolute",
-            top: "0",
-            left: "0",
-            right: "0",
-            bottom: "0",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <p className='text-center text-wrap m-auto fs-3'>{timer}</p>
-        </div>
-      )}
+    <div
+      className='palette bg-light p-2 mt-3 mx-auto rounded'
+      style={{ position: "relative" }}
+    >
+      <Placeholder className='d-flex' animation={loading ? null : "wave"}>
+        {colors.map((color, index) => (
+          <div key={index}>
+            <ColorShape
+              picked={picked}
+              color={color}
+              setColor={() => canPlace && setPicked(color)}
+            />
+          </div>
+        ))}
+        {!canPlace && (
+          <div
+            className='bg-primary rounded d-flex flex-column justify-content-center align-items-center'
+            style={{
+              position: "absolute",
+              top: "0",
+              left: "0",
+              right: "0",
+              bottom: "0",
+            }}
+          >
+            <p className='text-center text-wrap m-auto fs-3 '>{timer}</p>
+          </div>
+        )}
+      </Placeholder>
     </div>
   );
 }

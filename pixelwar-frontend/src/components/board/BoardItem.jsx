@@ -22,15 +22,6 @@ function BoardItem({ data }) {
     navigate(`/board/${data.id}`);
   };
 
-  const handleEdit = () => {
-    console.log("Edit action");
-    navigate(`/admin/board/edit/${data.id}`);
-  };
-
-  const handleDelete = () => {
-    console.log("Delete action");
-  };
-
   const actions = [
     {
       color: "warning",
@@ -41,16 +32,6 @@ function BoardItem({ data }) {
       color: "success",
       label: "Voir",
       onClick: handleView,
-    },
-    {
-      color: "primary",
-      label: "Modifier",
-      onClick: handleEdit,
-    },
-    {
-      color: "danger",
-      label: "Supprimer",
-      onClick: handleDelete,
     },
   ];
 
@@ -69,7 +50,7 @@ function BoardItem({ data }) {
         </CardHeader>
         <CardBody>
           <CardText>{data.description}</CardText>
-          <div className='mt-2 d-block justify-content-end'>
+          <div className='mt-2 d-flex justify-content-end'>
             {actions.map((action, index) => (
               <Button
                 key={index}

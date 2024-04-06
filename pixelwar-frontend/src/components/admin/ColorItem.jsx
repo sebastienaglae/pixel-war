@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Input, Button } from "reactstrap";
 import { FaTrash } from "react-icons/fa";
 

@@ -3,7 +3,7 @@ import "./Row.css";
 
 function Row({ y, boardData, selectedColor, row }) {
   return (
-    <div className='rowPixel'>
+    <div className='rowPixel d-flex'>
       {row.map((pixelColor, index) => (
         <Pixel
           key={index}
