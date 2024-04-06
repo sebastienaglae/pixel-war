@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./PixelBoardComponent.css";
 import Grid from "./Grid/Grid";
 import ColorPicker from "./ColorPicker/ColorPicker";
@@ -12,6 +12,7 @@ function PixelBoardComponent({ id, colorTable }) {
   const computePixelSize = (rowCount) => {
     return Math.min(25, Math.floor((window.innerHeight * 0.7) / rowCount));
   };
+  const [delay, setDelay] = useState(0);
   const socketUrl = `ws://localhost:3000/boards-ws/${id}`;
   if (socket === null || socket.url !== socketUrl) {
     if (socket !== null) {
@@ -63,6 +64,12 @@ function PixelBoardComponent({ id, colorTable }) {
         }
         return newGrid;
       });
+    },
+    onPersonalDelay: (delay) => {
+      console.log('onPersonalDelay', delay);
+      if (delay > 0) {
+        setDelay(delay);
+      }
     }
   }
   const colorPalette = new Array();
@@ -73,7 +80,6 @@ function PixelBoardComponent({ id, colorTable }) {
   var data = {
     width: size[0],
     height: size[1],
-    delay: 5,
     pixelSize: computePixelSize(size[1]),
     colors: colorPalette
   };
@@ -93,24 +99,29 @@ function PixelBoardComponent({ id, colorTable }) {
     generateInitialGrid(boardData.height, boardData.width, "#FFFFFF")
   );
   const [logs, setLogs] = useState([]);
-  const [canPlace, setCanPlace] = useState(false);
 
-  const onCooldownComplete = () => {
-    setCanPlace(true);
-  };
   const onPixelPlace = (x, y) => {
-    if (!canPlace) {
+    if (delay > 0) {
       return;
     }
-    setCanPlace(false);
     console.log('onPixelPlace', x, y, selectedColor, colorTable.indexOf(selectedColor));
     socket.setPixel(x, y, colorPalette.indexOf(selectedColor));
   };
 
+  // decrement delay every second
+  useEffect(() => {
+    if (delay > 0) {
+      const interval = setInterval(() => {
+        setDelay((prevDelay) => prevDelay - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [delay]);
+  
   return (
     <div className='pixelBoard'>
       <div className='d-flex justify-content-center m-auto'>
-        <Grid boardData={boardData} selectedColor={selectedColor} grid={grid} onPixelPlace={onPixelPlace} />
+        <Grid boardData={boardData} delay={delay} selectedColor={selectedColor} grid={grid} onPixelPlace={onPixelPlace} />
       </div>
       <div className='stats'>
         <StatsNav logs={logs} />
@@ -119,9 +130,7 @@ function PixelBoardComponent({ id, colorTable }) {
         colors={data.colors}
         picked={selectedColor}
         setPicked={setSelectedColor}
-        delay={data.delay}
-        canPlace={canPlace}
-        onCooldownComplete={onCooldownComplete}
+        delay={delay}
       />
     </div>
   );

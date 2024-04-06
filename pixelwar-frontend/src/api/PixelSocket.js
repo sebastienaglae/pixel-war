@@ -59,18 +59,20 @@ class PixelSocket {
 
         this.callback.onPixelsData(width, height, pixels);
         break;
+      case 6:
+        this.callback.onPersonalDelay(msg[0] | (msg[1] << 8));
+        break;
       default:
         console.error('Unknown message id:', msgId);
     }
   }
   onClose = (event) => {
     console.log('Disconnected from socket');
+    this.reconnect();
   }
   onError = (event) => {
     console.error('Socket error:', event);
-
-    this.socket.close();
-    this.connect();
+    this.reconnect();
   }
 
   setPixel = (x, y, colorIndex) => {
@@ -79,7 +81,29 @@ class PixelSocket {
     this.socket.send(msg);
   }
 
+  reconnect = () => {
+    this.close();
+
+    if (Date.now() - this.lastReconnect < 1000) {
+      if (this.timeout !== null) {
+        clearTimeout(this.timeout);
+      }
+      this.timeout = setTimeout(this.reconnect, 1000 - (Date.now() - this.lastReconnect));
+      return;
+    }
+    if (this.timeout !== null) {
+      clearTimeout(this.timeout);
+    }
+    this.lastReconnect = Date.now();
+    this.connect();
+  }
+
   close = () => {
+    this.socket.removeEventListener('open', this.onOpen);
+    this.socket.removeEventListener('message', this.onMessage);
+    this.socket.removeEventListener('close', this.onClose);
+    this.socket.removeEventListener('error', this.onError);
+    
     this.socket.close();
   }
 }

@@ -55,6 +55,7 @@ passport.use(new JWTStrategy({
 ));
 
 const RequireJWT = passport.authenticate('jwt', { session: false });
+const AllowJWT = passport.authenticate('jwt', { session: false, failWithError: true });
 
 module.exports = {
     authenticate: (req, res, next) => {
@@ -91,5 +92,6 @@ module.exports = {
                 res.status(500).json({ error: err });
             });
     },
-    RequireJWT
+    RequireJWT,
+    AllowJWT
 }

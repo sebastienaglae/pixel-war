@@ -1,34 +1,12 @@
 import "./ColorPicker.css";
 import ColorShape from "@components/pixelBoard/ColorPicker/ColorShape";
-import { useEffect, useState } from "react";
 
 function ColorPicker({
   picked,
   setPicked,
   colors,
-  canPlace,
   delay,
-  onCooldownComplete,
 }) {
-  const [timer, setTimer] = useState(delay);
-
-  useEffect(() => {
-    if (!canPlace) {
-      setTimer(delay);
-      const interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [canPlace, delay]);
-
-  useEffect(() => {
-    if (timer === 0 && !canPlace) {
-      onCooldownComplete();
-    }
-  }, [timer, onCooldownComplete, canPlace]);
-
   return (
     <div className='palette' style={{ position: "relative" }}>
       {colors.map((color, index) => (
@@ -36,11 +14,11 @@ function ColorPicker({
           <ColorShape
             picked={picked}
             color={color}
-            setColor={() => canPlace && setPicked(color)}
+            setColor={() => delay < 1 && setPicked(color)}
           />
         </div>
       ))}
-      {!canPlace && (
+      {delay > 0 && (
         <div
           className='bg-primary'
           style={{
@@ -54,7 +32,7 @@ function ColorPicker({
             alignItems: "center",
           }}
         >
-          <p className='text-center text-wrap m-auto fs-3'>{timer}</p>
+          <p className='text-center text-wrap m-auto fs-3'>{delay}</p>
         </div>
       )}
     </div>
