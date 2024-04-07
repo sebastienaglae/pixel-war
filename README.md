@@ -161,7 +161,7 @@ Github kanban
 
 ## Commandes
 
-### Front
+### Back
 
 #### Installation
 
