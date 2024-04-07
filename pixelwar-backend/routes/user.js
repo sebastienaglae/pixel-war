@@ -9,15 +9,20 @@ const mongoose = require("mongoose");
 
 const renderInfo = (id, res) => {
     UserMdl.findById(id)
-        .then(user => {
+        .then(async user => {
             // contributions is map with board id as key
-            const contributionBoardIds = Object.keys(user.contributions);
-            const boards = BoardMdl.find({ _id: { $in: contributionBoardIds } });
+            const contributionBoardIds = [];
+            const contributionPixelCountsByBoard = {};
+            for (let [boardId, pixels] of user.contributions.entries()) {
+                contributionBoardIds.push(boardId);
+                contributionPixelCountsByBoard[boardId] = pixels;
+            }
+            const boards = await BoardMdl.find({ _id: { $in: contributionBoardIds } });
             const contributions = boards.map(board => {
                 return {
                     id: board._id,
                     name: board.name,
-                    pixels: user.contributions[board._id]
+                    pixels: contributionPixelCountsByBoard[board._id]
                 };
             });
 
