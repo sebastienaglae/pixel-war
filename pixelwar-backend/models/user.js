@@ -23,13 +23,16 @@ const User = new Schema({
         type: Boolean,
         default: false
     },
-    contributions: [{
-        board: {
-            type: Schema.Types.ObjectId,
-            ref: "Board"
-        },
-        pixels: Number
-    }]
+    // contributions is a map of boardId -> pixels
+    contributions: {
+        type: Map,
+        of: Number,
+        default: {}
+    },
+    bio: {
+        type: String,
+        maxlength: 1024
+    }
 })
 
 module.exports = mongoose.model("User", User);

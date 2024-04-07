@@ -12,7 +12,8 @@ const loginValidator = [
 const registerValidator = [
     validator.body('email', 'Email is required').isEmail(),
     validator.body('password', 'Password is required').exists(),
-    validator.body('nickname', 'Nickname is required').isString().isLength({ min: 4, max: 16 })
+    validator.body('nickname', 'Nickname is required').isString().isLength({ min: 4, max: 16 }),
+    validator.body('bio', 'Bio is required').isString().isLength({ max: 1024 })
 ];
 
 router.post('/login', loginValidator, checkValidation, (req, res) => {
