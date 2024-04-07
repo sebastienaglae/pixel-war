@@ -310,7 +310,7 @@ router.get('/', async (req, res, next) => {
         total: totalBoards,
         page: page,
         limit: limit,
-        hasNext: totalBoards > (page + 1) * limit,
+        hasNext: totalBoards > page * limit,
         hasPrev: page > 1,
         boards: boards.map(board => {
             board.owner = ownersMap[board.owner];
