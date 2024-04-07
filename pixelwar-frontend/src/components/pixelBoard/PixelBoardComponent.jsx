@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import "./PixelBoardComponent.css";
 import Grid from "./Grid/Grid";
 import ColorPicker from "./ColorPicker/ColorPicker";
-import StatsNav from "./StatsNav/StatsNav";
 import PixelSocket from "../../api/PixelSocket";
+import { RoleContext } from "@contexts/RoleContext";
+import { WS_URL } from "@config/config";
 
 let socket = null;
 
 function PixelBoardComponent({ id, colorTable }) {
+  const { token } = useContext(RoleContext);
   const [size, setSize] = useState([50, 50]); // [width, height]
     const computePixelSize = (rowCount, columnCount) => {
       const maxSizeBasedOnHeight = Math.floor(
@@ -20,12 +22,12 @@ function PixelBoardComponent({ id, colorTable }) {
       return Math.min(25, maxSizeBasedOnHeight, maxSizeBasedOnWidth);
     };
   const [delay, setDelay] = useState(0);
-  const socketUrl = `ws://localhost:3000/boards-ws/${id}`;
+  const socketUrl = `ws://${WS_URL}/boards-ws/${id}?token=${token}`;
   if (socket === null || socket.url !== socketUrl) {
     if (socket !== null) {
       socket.close();
     }
-    socket = new PixelSocket(socketUrl, colorTable);
+    socket = new PixelSocket(socketUrl, colorTable, token);
   }
   const resizeGrid = (width, height) => {
     if (size[0] === width && size[1] === height) {
