@@ -152,7 +152,7 @@ _Bonus_
 - [x] Valeriia LAPSHINA (hunnybunnyv): HomePage
 - [x] Ernesto BONNE (ernestobone98): Utilisateurs
 - [x] Mike CHIAPPE (Mimi8298): Back-end, Hetzner Cloud & Web sockets
-- [x] Sebastien AGLAE (sebastienaglae): Administrateurs, Visiteurs
+- [x] Sebastien AGLAE (sebastienaglae): Gestion du projet, Administrateurs, Visiteurs, Intégration Back-end
 
 ## Kanban
 
