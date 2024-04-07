@@ -37,13 +37,13 @@ Le projet est accesible sur [https://assets.atrasis.net/pixel-war/video-frontend
 
 - **POST** [/login](https://api.pixel-war.atrasis.net/login) Permet à un utilisateur de se connecter.
 - **POST** [/register](https://api.pixel-war.atrasis.net/register) Permet à un utilisateur de s'inscrire.
-- **GET** [/board/:id](https://api.pixel-war.atrasis.net/board/:id) Permet de récupérer les détails d'un tableau spécifique.
-- **POST** [/board](https://api.pixel-war.atrasis.net/board) Permet de créer un nouveau tableau.
-- **PUT** [/board/:id](https://api.pixel-war.atrasis.net/board/:id) Permet de mettre à jour les détails d'un tableau spécifique.
-- **DELETE** [/board/:id](https://api.pixel-war.atrasis.net/board/:id) Permet de supprimer un tableau spécifique.
-- **GET** [/board/:id/thumbnail](https://api.pixel-war.atrasis.net/board/:id/thumbnail) Permet de récupérer un aperçu d'un tableau spécifique.
-- **GET** [/board/:id/heatmap](https://api.pixel-war.atrasis.net/board/:id/heatmap) Permet de récupérer une carte thermique d'un tableau spécifique.
-- **GET** [/board](https://api.pixel-war.atrasis.net/board) Permet de récupérer une liste de tableaux en fonction de différents filtres, triée selon différents critères.
+- **GET** [/boards/:id](https://api.pixel-war.atrasis.net/boards/:id) Permet de récupérer les détails d'un tableau spécifique.
+- **POST** [/boards](https://api.pixel-war.atrasis.net/boards) Permet de créer un nouveau tableau.
+- **PUT** [/boards/:id](https://api.pixel-war.atrasis.net/boards/:id) Permet de mettre à jour les détails d'un tableau spécifique.
+- **DELETE** [/boards/:id](https://api.pixel-war.atrasis.net/boards/:id) Permet de supprimer un tableau spécifique.
+- **GET** [/boards/:id/thumbnail](https://api.pixel-war.atrasis.net/boards/:id/thumbnail) Permet de récupérer un aperçu d'un tableau spécifique.
+- **GET** [/boards/:id/heatmap](https://api.pixel-war.atrasis.net/boards/:id/heatmap) Permet de récupérer une carte thermique d'un tableau spécifique.
+- **GET** [/boards](https://api.pixel-war.atrasis.net/boards) Permet de récupérer une liste de tableaux en fonction de différents filtres, triée selon différents critères.
 - **GET** [/stats](https://api.pixel-war.atrasis.net/stats) Permet de récupérer les statistiques du tableau de bord, telles que le nombre d'utilisateurs et le nombre de tableaux.
 - **GET** [/users/me](https://api.pixel-war.atrasis.net/users/me) Permet de récupérer les informations de l'utilisateur actuellement authentifié.
 - **GET** [/users/:id](https://api.pixel-war.atrasis.net/users/:id) Permet de récupérer les informations d'un utilisateur spécifique.
@@ -72,9 +72,9 @@ _Bonus_
 
 - [x] Utilisation de websockets pour la mise à jour en temps réel
 - [ ] SuperPixelBoard (PixelBoard géant)
-- [x] Exportation des PixelBoards en images en png
+- [x] Exportation des PixelBoards en images (png)
 - [x] Heatmap des contributions
-- [x] Déploiement sur Hetzner Cloud
+- [x] Déploiement sur Cloud (Hetzner Cloud)
 
 ## Pages
 
@@ -150,7 +150,7 @@ Github kanban
 
 ## Commandes
 
-### Front
+### Back
 
 #### Installation
 
@@ -164,11 +164,10 @@ npm i
 #### Lancement
 
 ```sh
-npm run start
 docker-compose up
 ```
 
-### Back
+### Front
 
 #### Installation
 
