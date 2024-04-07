@@ -18,11 +18,26 @@ const renderInfo = (id, res) => {
                 contributionPixelCountsByBoard[boardId] = pixels;
             }
             const boards = await BoardMdl.find({ _id: { $in: contributionBoardIds } });
+            const owners = await UserMdl.find({ _id: { $in: boards.map(board => board.owner) } }, { nickname: 1 });
             const contributions = boards.map(board => {
+                let boardStatus = 'active';
+                const currentTime = Date.now();
+                if (board.startAt > currentTime) {
+                    boardStatus = 'pending';
+                } else if (board.endAt < currentTime) {
+                    boardStatus = 'ended';
+                }
                 return {
                     id: board._id,
                     name: board.name,
-                    pixels: contributionPixelCountsByBoard[board._id]
+                    startAt: board.startAt,
+                    endAt: board.endAt,
+                    resolution: board.resolution,
+                    mode: board.mode,
+                    delay: board.delay,
+                    pixels: contributionPixelCountsByBoard[board._id],
+                    owner: owners.find(owner => owner._id.equals(board.owner)),
+                    status: boardStatus
                 };
             });
 

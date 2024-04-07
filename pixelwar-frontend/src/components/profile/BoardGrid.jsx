@@ -32,7 +32,7 @@ function BoardGrid({ userBoards, totalPixels, loading = true }) {
             </Col>
           ))}
           {
-            userBoards && userBoards.contributions && 
+            userBoards && userBoards.contributions && userBoards.contributions.length === 0 &&
               <div> Vous n'avez pas de contributions </div>
           }
         </Row>

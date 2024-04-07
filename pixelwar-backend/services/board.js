@@ -191,6 +191,8 @@ module.exports = {
             await UserMdl.updateOne({ _id: userId }, { $inc: update });
         }
 
+        // delete thumbnail
+        await client.del(boardThumbnailKey(id));
         await publish(eventBoardUpdated, id, { pixelIndex, color: color});
 
         return header.delay;
@@ -272,7 +274,12 @@ module.exports = {
             resolve = vresolve;
             reject = vreject;
         });
-        const image = new Jimp(sizeX, sizeY, 0xFFFFFFFF, (err, image) => {
+        const upscaleTable = [
+            [0, 16], [128, 8], [512, 4], [1024, 1]
+        ]
+        const upscale = upscaleTable.find(([threshold, value]) => sizeX * sizeY >= threshold)[1];
+
+        const image = new Jimp(sizeX * upscale, sizeY * upscale, 0xFFFFFFFF, (err, image) => {
             if (err) {
                 reject(err);
                 return;
@@ -284,7 +291,11 @@ module.exports = {
                         if (colorIndex - 1 >= colorTable.length) {
                             colorIndex = 0;
                         }
-                        image.setPixelColor(colorTable[colorIndex - 1], x, y);
+                        for (let i = 0; i < upscale; i++) {
+                            for (let j = 0; j < upscale; j++) {
+                                image.setPixelColor(colorTable[colorIndex - 1], x * upscale + j, y * upscale + i);
+                            }
+                        }
                     }
                 }
             }
