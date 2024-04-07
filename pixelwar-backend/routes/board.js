@@ -179,14 +179,14 @@ router.post('/', AuthService.RequireJWT, createBoardValidator, checkValidation, 
     });
 });
 router.put('/:id', AuthService.RequireJWT, updateBoardValidator, checkValidation, (req, res, next) => {
-    const { name, startAt, endAt, resolution } = req.body;
+    const { name, startAt, endAt, resolution, mode, delay } = req.body;
 
     if (mongoose.Types.ObjectId.isValid(req.params.id) === false) {
         res.status(404).json({error: 'Board not found'});
         return;
     }
 
-    BoardService.update(req.params.id, name, startAt, endAt, resolution, req.user.admin ? null : req.user.id)
+    BoardService.update(req.params.id, name, startAt, endAt, resolution, mode, delay, req.user.admin ? null : req.user.id)
         .then(success => {
             if (!success) {
                 res.status(404).json({error: 'Board not found' });

@@ -75,8 +75,8 @@ module.exports = {
 
         return board;
     },
-    update: async (id, name, startAt, endAt, resolution, ownerId) => {
-        const orig = await BoardMdl.findOneAndUpdate(ownerId != null ? { _id: id, owner: ownerId } : { _id: id }, { name, startAt, endAt, resolution }, {
+    update: async (id, name, startAt, endAt, resolution, mode, delay, ownerId) => {
+        const orig = await BoardMdl.findOneAndUpdate(ownerId != null ? { _id: id, owner: ownerId } : { _id: id }, { name, startAt, endAt, resolution, mode, delay }, {
             returnOriginal: true,
             runValidators: true
         });
