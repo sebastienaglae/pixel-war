@@ -13,7 +13,7 @@ import {
 import DateTimePicker from "react-datetime-picker";
 import ColorItem from "./ColorItem";
 
-function PixelBoardForm({ initialData = {}, onSubmit, error = "", isEdit = false }) {
+function PixelBoardForm({ initialData = {}, onSubmit, error = "", isEdit = false, loading }) {
   const [pixelBoard, setPixelBoard] = useState({
     name: "",
     resolution: {
@@ -51,7 +51,8 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "", isEdit = false
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(pixelBoard);
+    const { delay, ...rest } = pixelBoard;
+    onSubmit({ ...rest, delay: parseInt(delay) });
   };
 
   const addColor = (hex) => {
@@ -68,6 +69,9 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "", isEdit = false
   };
 
   const onDeleteColor = (index) => {
+    if (pixelBoard.colors.length === 1) {
+      return;
+    }
     const colors = [...pixelBoard.colors];
     colors.splice(index, 1);
     setPixelBoard((prevState) => ({ ...prevState, colors }));
@@ -207,7 +211,7 @@ function PixelBoardForm({ initialData = {}, onSubmit, error = "", isEdit = false
               />
             </FormGroup>
             {error && <p className='text-danger'>{error}</p>}
-            <Button color='primary' type='submit'>
+            <Button color='primary' type='submit' disabled={loading}>
               Soumettre
             </Button>
           </Form>

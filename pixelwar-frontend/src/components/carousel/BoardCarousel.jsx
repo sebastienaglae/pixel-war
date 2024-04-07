@@ -1,27 +1,28 @@
-import { useState } from "react";
-import {
-  Carousel,
-  CarouselItem,
-  CarouselControl,
-} from "reactstrap";
+import { useState, useEffect } from "react";
+import { Carousel, CarouselItem, CarouselControl } from "reactstrap";
 import BoardCarouselPage from "./BoardCarouselPage";
 
-function BoardCarousel({ boards, itemsPerPage, loading = true}) {
+function BoardCarousel({ data, itemsPerPage, loading }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const next = () => {
     setActiveIndex(
-      (prevIndex) => (prevIndex + 1) % Math.ceil(boards.length / itemsPerPage)
+      (prevIndex) =>
+        (prevIndex + 1) % Math.ceil(data.boards.length / itemsPerPage)
     );
   };
 
   const previous = () => {
     setActiveIndex((prevIndex) =>
       prevIndex === 0
-        ? Math.ceil(boards.length / itemsPerPage) - 1
+        ? Math.ceil(data.boards.length / itemsPerPage) - 1
         : prevIndex - 1
     );
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Carousel
@@ -31,15 +32,14 @@ function BoardCarousel({ boards, itemsPerPage, loading = true}) {
       interval={false}
       className='my-5'
     >
-      {Array.from({ length: Math.ceil(boards.length / itemsPerPage) }).map(
+      {Array.from({ length: Math.ceil(data.boards.length / itemsPerPage) }).map(
         (_, index) => (
           <CarouselItem key={index}>
             <BoardCarouselPage
-              items={boards.slice(
+              items={data.boards.slice(
                 index * itemsPerPage,
                 index * itemsPerPage + itemsPerPage
               )}
-
               loading={loading}
             />
           </CarouselItem>

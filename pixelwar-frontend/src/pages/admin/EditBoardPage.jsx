@@ -1,36 +1,38 @@
 import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import PixelBoardForm from "@components/admin/PixelBoardForm";
 import { Container, Col } from "reactstrap";
+import { useApi, useRequest } from "@hooks/api";
 
-function EditBoardPage({ boardId }) {
+function EditBoardPage() {
   const [error, setError] = useState("");
-  const [initialData, setInitialData] = useState(null);
+  const { boardId } = useParams();
+  const navigate = useNavigate();
+  const { data } = useApi(`/boards/${boardId}`);
+  const { success, execute } = useRequest(`/boards/${boardId}`, {}, "put");
 
   useEffect(() => {
-    const loadedData = {
-      title: "Titre Existant",
-      size: "64",
-      delay: "5",
-      creationDate: new Date(),
-      endDate: new Date(),
-      mode: "no-overwrite",
-    };
-
-    setInitialData(loadedData);
-  }, [boardId]);
+  }, [data]);
 
   const handleSubmit = (formData) => {
-    console.log("Mise à jour avec :", formData);
-    setError("Une erreur s'est produite");
+    execute("", {
+      data: formData,
+    });
   };
+
+  useEffect(() => {
+    if (success) {
+      navigate("/admin");
+    }
+  }, [success]);
 
   return (
     <Container className='my-5' sm='12' md={{ size: 6, offset: 3 }}>
       <Col sm='12' md={{ size: 6, offset: 3 }}>
         <h2 className='text-center mb-5'>Éditer PixelBoard</h2>
-        {initialData && (
+        {data && (
           <PixelBoardForm
-            initialData={initialData}
+            initialData={data}
             onSubmit={handleSubmit}
             error={error}
             isEdit={true}

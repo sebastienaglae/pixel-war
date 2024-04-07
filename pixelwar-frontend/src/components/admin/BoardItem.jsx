@@ -9,27 +9,34 @@ import {
   CardTitle,
   CardImg,
 } from "reactstrap";
+import { asset, downloadImage } from "@hooks/api";
+import { useRequest } from "@hooks/api";
+import { useEffect } from "react";
 
-function BoardItem({ data }) {
+function BoardItem({ data, onDelete }) {
   let navigate = useNavigate();
-
+  const { execute, success } = useRequest(`/boards/${data.id}`, {}, "delete");
   const handleDownload = () => {
-    console.log("Download action");
+    downloadImage(`/boards/${data.id}/thumbnail`);
   };
 
   const handleView = () => {
-    console.log("View action");
     navigate(`/board/${data.id}`);
   };
 
   const handleEdit = () => {
-    console.log("Edit action");
     navigate(`/admin/board/edit/${data.id}`);
   };
 
   const handleDelete = () => {
-    console.log("Delete action");
+    execute();
   };
+
+  useEffect(() => {
+    if (success) {
+      onDelete(data.id);
+    }
+  }, [success]);
 
   const actions = [
     {
@@ -58,7 +65,7 @@ function BoardItem({ data }) {
     <Card className='d-flex flex-row' color='dark' text='white'>
       <CardImg
         variant='left'
-        src={data.image || "https://picsum.photos/200"}
+        src={asset("/boards/" + data.id + "/thumbnail")}
         alt='random'
         style={{ objectFit: "cover", width: "200px" }}
         className='rounded-start'
@@ -83,8 +90,8 @@ function BoardItem({ data }) {
           </div>
         </CardBody>
         <CardFooter color='text-muted'>
-          Dernière modification le {new Date(data.date).toLocaleDateString()}{" "}
-          par {data.author}
+          Dernière modification le {new Date(data.startAt).toLocaleDateString()}{" "}
+          par {data.owner.nickname}
         </CardFooter>
       </div>
     </Card>

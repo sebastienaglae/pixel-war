@@ -5,9 +5,11 @@ import {
   CardImg,
   CardText,
   CardTitle,
+  CardFooter,
   Button,
 } from "reactstrap";
 import { useNavigate } from "react-router-dom";
+import { asset } from "@hooks/api";
 
 function PixelBoardCard({ board }) {
   const navigate = useNavigate();
@@ -17,14 +19,18 @@ function PixelBoardCard({ board }) {
 
   return (
     <Card className='mb-3' color='background'>
-      <CardImg src={board.previewImage} alt='Board Preview' />
+      <CardImg
+        src={asset(`/boards/${board.id}/thumbnail`)}
+        alt='Board Preview'
+      />
       <CardBody>
-        <CardTitle tag='h5'>{board.title}</CardTitle>
-        <CardText>Date Created: {board.dateCreated}</CardText>
-        <CardText>Number of Pixels: {board.pixelsNumber}</CardText>
-        <CardText>Status: {board.status}</CardText>
+        <CardTitle tag='h5'>{board.name}</CardTitle>
+        <CardText>Démarré le {board.startAt}</CardText>
+        <CardText>Nombre de pixel: {board.pixelsNumber}</CardText>
+        <CardText>Statut: {board.status}</CardText>
         <Button onClick={handleViewBoard}>Voir</Button>
       </CardBody>
+      <CardFooter>Par {board.owner}</CardFooter>
     </Card>
   );
 }

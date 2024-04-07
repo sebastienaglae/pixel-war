@@ -5,24 +5,7 @@ import BoardItem from "@components/admin/BoardItem";
 import PaginationComponent from "@components/pagination/PaginationComponent";
 import SearchBar from "@components/admin/SearchBar";
 import SortComponent from "@components/admin/SortComponent";
-const initialBoards = [
-  {
-    id: 1,
-    name: "Mon pixel board",
-    description: "Le meilleur pixel board de tous les temps",
-    image: "https://picsum.photos/200",
-    date: "2021-10-12T00:00:00.000Z",
-    author: "Test",
-  },
-  {
-    id: 2,
-    name: "Mon pixel board 2",
-    description: "Le meilleur pixel board de tous les temps",
-    image: "https://picsum.photos/200",
-    date: "2021-10-12T00:00:00.000Z",
-    author: "Test",
-  },
-];
+import { useRequest } from "@hooks/api";
 
 const sortOptions = [
   { label: "Nom (asc)", value: "name-asc" },
@@ -44,19 +27,38 @@ function PixelBoardListPage() {
   const [sortValue, setSortValue] = useState("name-asc");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pixelBoards, setPixelBoards] = useState(initialBoards);
+  const { data, execute } = useRequest("/boards", {}, "get");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    execute("");
+  }, []);
 
   useEffect(() => {
     if (searchTerm !== lastSearchTerm) {
       setCurrentPage(1);
     }
-    console.log("Searching with:", searchTerm);
-    console.log("Sorting with:", sortValue);
-    console.log("Current page:", currentPage);
-    console.log("Items per page:", itemsPerPage);
+    execute("", {
+      params: {
+        query: searchTerm,
+        sortType: sortValue,
+        page: currentPage,
+        limit: itemsPerPage,
+      },
+    });
     setLastSearchTerm(searchTerm);
   }, [searchTerm, sortValue, currentPage, itemsPerPage]);
+
+  const onDelete = (id) => {
+    execute("", {
+      params: {
+        query: searchTerm,
+        sortType: sortValue,
+        page: currentPage,
+        limit: itemsPerPage,
+      },
+    });
+  };
 
   return (
     <Container className='my-5'>
@@ -81,27 +83,32 @@ function PixelBoardListPage() {
           />
         </Row>
         <Row>
-          <CardColumns>
-            {pixelBoards.map((board) => (
-              <BoardItem key={board.id} data={board} />
-            ))}
-            {pixelBoards.length === 0 && (
-              <p className='text-center'>Aucun pixel board trouvé</p>
-            )}
-          </CardColumns>
+          {data && (
+            <CardColumns>
+              {data.boards.map((board) => (
+                <BoardItem key={board.id} data={board} onDelete={onDelete} />
+              ))}
+              {data.boards.length === 0 && (
+                <p className='text-center'>Aucun pixel board trouvé</p>
+              )}
+            </CardColumns>
+          )}
         </Row>
         <br />
         <Row>
-          <PaginationComponent
-            itemsPerPage={itemsPerPage}
-            totalItems={pixelBoards.length}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-            onItemsPerPageChange={(newSize) => {
-              setItemsPerPage(newSize);
-              setCurrentPage(1);
-            }}
-          />
+          {data && (
+            <PaginationComponent
+              itemsPerPage={itemsPerPage}
+              totalItems={data.total}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={(newSize) => {
+                setItemsPerPage(newSize);
+                setCurrentPage(1);
+              }}
+              hasNextPage={data.hasNext}
+            />
+          )}
         </Row>
       </Col>
     </Container>

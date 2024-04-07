@@ -16,6 +16,7 @@ import { useContext } from "react";
 import NotFound from "@pages/NotFound";
 import Unauthorized from "@pages/Unauthorized";
 import UserProfilePage from "@pages/UserProfilePage";
+import HeatmapPage from "@pages/HeatmapPage";
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path='board/heatmap/:id' element={<HeatmapPage />} />
       </Route>
     </Routes>
   );

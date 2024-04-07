@@ -11,40 +11,48 @@ import {
 } from "reactstrap";
 import EditableField from "./EditableField";
 import { ThemeContext } from "@contexts/ThemeContext";
+import { useRequest } from "@hooks/api";
 
 function UserInfo({ userData, loading = true }) {
   const [isEditing, setIsEditing] = useState(false);
   const { theme, setTheme, themePreference, setThemePreference } =
     useContext(ThemeContext);
+  const { success, execute } = useRequest("/users", {}, "put");
 
   const handleEditClick = () => {
+    if (isEditing) {
+      execute("/me", {
+        data: userData,
+      });
+    }
+
     setIsEditing(!isEditing);
   };
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
-    };
-    
-    const toggleThemePreference = () => {
-        setThemePreference(themePreference === "auto" ? "user" : "auto");
-    };
+  };
+
+  const toggleThemePreference = () => {
+    setThemePreference(themePreference === "auto" ? "user" : "auto");
+  };
 
   const userInfoFields = [
     {
       title: "Nom d'utilisateur",
-      value: userData.username,
+      value: () => userData.nickname,
       inputType: "text",
-      inputName: "username",
+      inputName: "nickname",
     },
     {
       title: "Email",
-      value: userData.email,
+      value: () => userData.email,
       inputType: "email",
       inputName: "email",
     },
     {
       title: "Bio",
-      value: userData.bio,
+      value: () => userData.bio,
       inputType: "text",
       inputName: "bio",
     },
@@ -53,27 +61,28 @@ function UserInfo({ userData, loading = true }) {
     <Card color='background-secondary' style={{ width: "300px" }}>
       <CardHeader style={{ fontWeight: "bold" }}>
         <Placeholder animation={loading ? null : "wave"}>
-          {userData.username}
+          {userData && userData.nickname}
         </Placeholder>
       </CardHeader>
       <CardBody>
         <img
-          src={userData.profileImage}
+          src='https://i.pinimg.com/736x/c0/74/9b/c0749b7cc401421662ae901ec8f9f660.jpg'
           alt='Profile'
           className='rounded-circle mb-3'
           style={{ width: "150px", height: "150px", objectFit: "cover" }}
         />
-        {userInfoFields.map((field, index) => (
-          <EditableField
-            key={index}
-            isEditing={isEditing}
-            value={field.value}
-            title={field.title}
-            inputType={field.inputType}
-            inputName={field.inputName}
-            loading={loading}
-          />
-        ))}
+        {userData &&
+          userInfoFields.map((field, index) => (
+            <EditableField
+              key={index}
+              isEditing={isEditing}
+              value={field.value()}
+              title={field.title}
+              inputType={field.inputType}
+              inputName={field.inputName}
+              loading={loading}
+            />
+          ))}
         <CardGroup className='my-2 d-flex flex-column'>
           <div style={{ fontWeight: "bold" }}>Theme</div>
           <Label check>
