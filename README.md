@@ -175,11 +175,10 @@ npm i
 #### Lancement
 
 ```sh
-npm run start
 docker-compose up
 ```
 
-### Back
+### Front
 
 #### Installation
 
