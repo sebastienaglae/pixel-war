@@ -2,6 +2,12 @@ const BoardService = require('../services/board');
 const AuthService = require('../services/auth');
 
 exports.handle = function(ws, req) {
+    // get jwt from BASIC auth
+    const auth = req.query.token;
+    if (auth) {
+        req.headers.authorization = 'Bearer ' + auth;
+    }
+
     AuthService.AllowJWT(req, ws, err => {
         const userId = req.user ? req.user.id : null;
         const msgId = {
@@ -55,7 +61,7 @@ exports.handle = function(ws, req) {
                             callback.onPersonalDelayChange(nextDelay);
                         })
                         .catch(err => {
-                            console.error(err);
+                            console.warn('Error setting pixel', err);
                         });
                     break;
                 default:

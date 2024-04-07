@@ -162,7 +162,7 @@ module.exports = {
 
         if (header.mode === 'no-overwrite') {
             const existingColor = await client.bitfield(boardKey(id), 'GET', 'u8', (boardHeaderSize + pixelIndex) * 8);
-            if (existingColor) throw new Error('Pixel already set');
+            if (existingColor[0]) throw new Error('Pixel already set');
         }
 
         if (userId) {
@@ -229,7 +229,7 @@ module.exports = {
                 const now = new Date();
                 const diff = now - lastPlaceTimeDate;
                 if (diff < header.delay * 1000) {
-                    throw new Error('Rate limited');
+                    callback.onPersonalDelayChange(((header.delay * 1000 - diff) / 1000) >> 0);
                 }
             }
         }
