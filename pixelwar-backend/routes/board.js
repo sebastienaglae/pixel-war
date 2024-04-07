@@ -173,11 +173,15 @@ router.post('/', AuthService.RequireJWT, createBoardValidator, checkValidation, 
         res.status(500).json({error: err.message});
     });
 });
-router.put('/:id', AuthService.RequireJWT, updateBoardValidator, checkValidation, function(req, res, next) {
+router.put('/:id', AuthService.RequireJWT, updateBoardValidator, checkValidation, (req, res, next) => {
     const { name, startAt, endAt, resolution } = req.body;
 
-    BoardService.update(req.params.id, name, startAt, endAt, resolution)
-        .then(() => {
+    BoardService.update(req.params.id, name, startAt, endAt, resolution, req.user.admin ? null : req.user.id)
+        .then(success => {
+            if (!success) {
+                res.status(404).json({error: 'Board not found' });
+                return;
+            }
             fetchAndReturn(req.params.id, res);
         })
         .catch(err => {
@@ -186,8 +190,7 @@ router.put('/:id', AuthService.RequireJWT, updateBoardValidator, checkValidation
 });
 
 router.delete('/:id', AuthService.RequireJWT, function(req, res, next) {
-    const owner = req.user.id;
-    BoardService.remove(req.params.id, owner)
+    BoardService.remove(req.params.id, req.user.admin ? null : req.user.id)
         .then(success => {
             if (success) {
                 res.status(204).end();
@@ -201,22 +204,56 @@ router.delete('/:id', AuthService.RequireJWT, function(req, res, next) {
 });
 
 router.get('/:id/thumbnail', function(req, res, next) {
-    BoardService.getThumbnail(req.params.id)
-        .then(thumbnail => {
-            res.writeHead(200, {
-                'Content-Type': 'image/png',
-                'Content-Length': thumbnail.length
+    const format = req.query.format || 'png';
+    if (format !== 'png' && format !== 'json') {
+        return res.status(400).json({error: 'Invalid format'});
+    }
+    if (format === 'png') {
+        BoardService.getThumbnailPng(req.params.id)
+            .then(thumbnail => {
+                if (!thumbnail) {
+                    return res.status(404).json({error: 'Board not found'});
+                }
+                res.writeHead(200, {
+                    'Content-Type': 'image/png',
+                    'Content-Length': thumbnail.length
+                });
+                res.end(thumbnail);
+            })
+            .catch(err => {
+                res.status(500).json({error: err.message});
             });
-            res.end(thumbnail);
+    } else {
+        BoardService.getThumbnail(req.params.id)
+            .then(thumbnail => {
+                if (!thumbnail) {
+                    return res.status(404).json({error: 'Board not found'});
+                }
+                res.status(200).json(thumbnail);
+            })
+            .catch(err => {
+                res.status(500).json({error: err.message});
+            });
+    }
+});
+router.get('/:id/heatmap', function(req, res, next) {
+    BoardService.getHeatmap(req.params.id)
+        .then(heatmap => {
+            if (!heatmap) {
+                return res.status(404).json({error: 'Board not found'});
+            }
+            res.status(200).json(heatmap);
         })
         .catch(err => {
             res.status(500).json({error: err.message});
         });
 });
 router.get('/', async (req, res, next) => {
-    const { query, status, sortType, page, limit } = req.query;
+    const { query, status, sortType, pageString, limitString } = req.query;
     const sortQuery = sort[sortType];
     const filter = query ? { name: { $regex: query, $options: 'i' } } : {};
+    const page = Math.max(parseInt(pageString) || 1, 1);
+    const limit = Math.min(parseInt(limitString) || 10, 100);
 
     if (status) {
         const currentTime = Date.now();
@@ -237,8 +274,8 @@ router.get('/', async (req, res, next) => {
     const totalBoards = await BoardMdl.countDocuments(filter || {}).exec();
     const boards = await BoardMdl.find(filter || {})
         .sort(sortQuery || { createdAt: -1 })
-        .skip((page * limit) || 0)
-        .limit(limit || 10)
+        .skip((page - 1) * limit)
+        .limit(limit)
         .exec();
     const ownerIds = boards.map(board => board.owner);
     const owners = await UserMdl.find({ _id: { $in: ownerIds } }, { email: 1, nickname: 1 }).exec();
@@ -249,15 +286,33 @@ router.get('/', async (req, res, next) => {
 
     res.status(200).json({
         total: totalBoards,
-        page: (page || 0) + 1,
-        limit: limit || 10,
-        hasNext: totalBoards > (page + 1) * (limit || 10),
-        hasPrev: page > 0,
+        page: page,
+        limit: limit,
+        hasNext: totalBoards > (page + 1) * limit,
+        hasPrev: page > 1,
         boards: boards.map(board => {
             board.owner = ownersMap[board.owner];
             return formatBoard(board);
         })
     });
+});
+router.delete('/:id', AuthService.RequireJWT, async (req, res, next) => {
+    const { id } = req.params;
+    const board = await BoardMdl.findById(id);
+    if (!board) {
+        return res.status(404).json({ error: 'Board not found' });
+    }
+    if (!req.user.admin) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    BoardService.remove(id, board.owner)
+        .then(() => {
+            res.status(204).end();
+        })
+        .catch(err => {
+            res.status(500).json({ error: err.message });
+        });
 });
 
 module.exports = router;

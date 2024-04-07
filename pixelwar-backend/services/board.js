@@ -1,6 +1,7 @@
 const BoardMdl = require('../models/board');
 const { client } = require('../databases/redis');
 const Jimp = require("jimp");
+const UserMdl = require('../models/user');
 
 const boardHeaderSize = 4; // 2 bytes for sizeX, 2 bytes for sizeY
 
@@ -74,12 +75,12 @@ module.exports = {
 
         return board;
     },
-    update: async (id, name, startAt, endAt, resolution) => {
-        const orig = await BoardMdl.findByIdAndUpdate(id, {name, startAt, endAt, resolution}, {
+    update: async (id, name, startAt, endAt, resolution, ownerId) => {
+        const orig = await BoardMdl.findOneAndUpdate(ownerId != null ? { _id: id, owner: ownerId } : { _id: id }, { name, startAt, endAt, resolution }, {
             returnOriginal: true,
             runValidators: true
         });
-        if (!orig) return null;
+        if (!orig) return false;
 
         if (orig.resolution.x !== resolution.x || orig.resolution.y !== resolution.y) {
             for (let i = 0; i < 10; i++) {
@@ -122,13 +123,17 @@ module.exports = {
                 }
 
                 await publish(eventBoardResized, id, { size: { x: outputSizeX, y: outputSizeY } });
+                await client.del(boardThumbnailKey(id));
+
+                break;
             }
         }
 
         await publish(eventHeaderUpdated, id, { header: { name, startAt, endAt, resolution } });
+        return true;
     },
     remove: async (id, owner) => {
-        const success = await BoardMdl.deleteOne({ _id: id, owner });
+        const success = await BoardMdl.deleteOne(owner != null ? { _id: id, owner: owner } : { _id: id });
         if (!success || success.deletedCount === 0) return false;
 
         await client.del(boardKey(id));
@@ -176,10 +181,14 @@ module.exports = {
         if (!result) throw new Error('Failed to set pixel');
 
         // set heatmap
-        await client.zincrby(boardHeatmapKey(id), 1, pixelIndex);
+        await client.zincrby(boardHeatmapKey(id), 1, Math.floor(pixelIndex / header.resolution.x) + ',' + (pixelIndex % header.resolution.x));
         // set user last place time
         if (userId) {
             await client.hset(boardUserLastPlaceKey(id), userId, new Date().toUTCString());
+
+            const update = {};
+            update[`contributions.${id}`] = 1;
+            await UserMdl.updateOne({ _id: userId }, { $inc: update });
         }
 
         await publish(eventBoardUpdated, id, { pixelIndex, color: color});
@@ -238,7 +247,7 @@ module.exports = {
             subscriptions.delete(id);
         }
     },
-    getThumbnail: async (id) => {
+    getThumbnailPng: async (id) => {
         let thumbnailBuf = await client.getBuffer(boardThumbnailKey(id));
         if (thumbnailBuf) {
             return thumbnailBuf;
@@ -286,5 +295,51 @@ module.exports = {
         await client.set(boardThumbnailKey(id), thumbnailBuf, 'EX', thumbnailExpire);
 
         return thumbnailBuf;
-    }
+    },
+    getThumbnail: async (id) => {
+        const pixelsBuf = await client.getBuffer(boardKey(id));
+        if (!pixelsBuf) return null;
+
+        const sizeX = pixelsBuf[0] | pixelsBuf[1] << 8;
+        const sizeY = pixelsBuf[2] | pixelsBuf[3] << 8;
+
+        const rows = [];
+        for (let y = 0; y < sizeY; y++) {
+            const row = [];
+            for (let x = 0; x < sizeX; x++) {
+                const colorIndex = pixelsBuf[boardHeaderSize + y * sizeX + x];
+                row.push(colorIndex);
+            }
+            rows.push(row);
+        }
+
+        return rows;
+    },
+    getHeatmap: async (id) => {
+        const heatmap = await client.zrange(boardHeatmapKey(id), 0, -1, 'WITHSCORES');
+        const header = await BoardMdl.findById(id, { resolution: 1 });
+        if (!heatmap || !header) return null;
+
+        const sizeX = header.resolution.x;
+        const sizeY = header.resolution.y;
+        const heatmapValuePerPixel = {};
+        for (let i = 0; i < heatmap.length; i += 2) {
+            const [y, x] = heatmap[i].split(',');
+            const pixelIndex = parseInt(y) * sizeX + parseInt(x);
+            heatmapValuePerPixel[pixelIndex] = parseInt(heatmap[i + 1]);
+        }
+
+        const rows = [];
+        for (let y = 0; y < sizeY; y++) {
+            const row = [];
+            for (let x = 0; x < sizeX; x++) {
+                const pixelIndex = y * sizeX + x;
+                const score = heatmapValuePerPixel[pixelIndex] || 0;
+                row.push(score ? parseInt(score) : 0);
+            }
+            rows.push(row);
+        }
+
+        return rows;
+    },
 }

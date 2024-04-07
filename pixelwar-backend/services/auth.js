@@ -77,7 +77,7 @@ module.exports = {
         const { email, password, nickname } = req.body;
         UserModel.create({ email, password: hashPassword(password), nickname })
             .then(user => {
-                const token = jwt.sign({ id: user.id, email: user.email, nickname: user.nickname }, JWT_SECRET);
+                const token = jwt.sign({ id: user.id, email: user.email, nickname: user.nickname, admin: false }, JWT_SECRET, { expiresIn: '1d' });
                 return res.json({ token });
             })
             .catch(err => {

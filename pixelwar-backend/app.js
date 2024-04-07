@@ -27,7 +27,6 @@ app.ws('/boards-ws/:id', require('./routes/board_ws').handle);
 app.use('/auth', require('./routes/auth'));
 app.use('/boards', require('./routes/board'));
 app.use('/users', require('./routes/user'));
-app.use('/admin', require('./routes/admin'));
 app.use('/dashboard', require('./routes/dashboard'));
 
 module.exports = app;
