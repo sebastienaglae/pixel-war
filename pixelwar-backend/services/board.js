@@ -275,7 +275,7 @@ module.exports = {
             reject = vreject;
         });
         const upscaleTable = [
-            [0, 16], [128, 8], [512, 4], [1024, 1]
+            [0, 16], [32, 8], [64, 4], [128, 2], [256, 1]
         ]
         const upscale = upscaleTable.find(([threshold, value]) => sizeX * sizeY >= threshold)[1];
 
