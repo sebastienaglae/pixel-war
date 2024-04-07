@@ -249,11 +249,11 @@ router.get('/:id/heatmap', function(req, res, next) {
         });
 });
 router.get('/', async (req, res, next) => {
-    const { query, status, sortType, pageString, limitString } = req.query;
+    const { query, status, sortType } = req.query;
     const sortQuery = sort[sortType];
     const filter = query ? { name: { $regex: query, $options: 'i' } } : {};
-    const page = Math.max(parseInt(pageString) || 1, 1);
-    const limit = Math.min(parseInt(limitString) || 10, 100);
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.min(parseInt(req.query.limit) || 10, 100);
 
     if (status) {
         const currentTime = Date.now();
