@@ -25,12 +25,12 @@ passport.use("local", new LocalStrategy({
         return UserModel.findOne({nickname})
             .then(user => {
                 if (!user) {
-                    return cb(null, false, {message: 'Incorrect email or password.'});
+                    return cb(null, false, {message: 'Incorrect username or password.'});
                 }
                 return comparePassword(password, user.password)
                     .then(match => {
                         if (!match) {
-                            return cb(null, false, {message: 'Incorrect email or password.'});
+                            return cb(null, false, {message: 'Incorrect username or password.'});
                         }
                         return cb(null, user, {message: 'Logged In Successfully'});
                     }
