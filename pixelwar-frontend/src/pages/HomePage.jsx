@@ -1,102 +1,72 @@
-import React from "react";
-import { Row, Col, Card, CardBody, CardHeader, CardTitle, CardText, Button } from "reactstrap";
+import { useState } from "react";
+import { Row, Col, Container } from "reactstrap";
+import CardStat from "@components/common/CardStat";
+import BoardCarousel from "@components/carousel/BoardCarousel";
+import { useApi } from "@hooks/api";
 
 function HomePage() {
-    return (
-        <div>
-            <h1 className="text-center">Home Page</h1>
+  const itemsPerPage = 3;
 
-            {/* First Row of Cards stats */}
-            <Row className="justify-content-center">
-                <Col xs="auto">
-                    <Card className="my-2" color="primary" inverse style={{ width: '18rem' }}>
-                        <CardHeader className="text-white">Number of users</CardHeader>
-                        <CardBody>156</CardBody>
-                    </Card>
-                </Col>
+  const [userCount, setUserCount] = useState("Statistique indisponible");
+  const [boardCount, setBoardCount] = useState("Statistique indisponible");
 
-                <Col xs="auto">
-                    <Card className="my-2" color="secondary" inverse style={{ width: '18rem' }}>
-                        <CardHeader className="text-white">Number of Boards</CardHeader>
-                        <CardBody>12</CardBody>
-                    </Card>
-                </Col>
-            </Row>
+  const { loading: loadingStats, data: dataStats } = useApi("/dashboard/stats");
+  const { loading: loadingLast, data: dataLast } = useApi(
+    "/boards/?status=active&sortType=startAt-desc"
+  );
+  const { loading: loadingFinished, data: dataFinished } = useApi(
+    "/boards/?status=ended&sortType=endAt-desc"
+  );
 
-            {/* Second Row of Cards lastest. To map them later and maybe implement a carousel*/}
-            <h3 className="text-center">Latest Boards</h3>
-            <Row className="justify-content-center">
-                <Col xs="auto">
-                    <Card style={{ width: '18rem', backgroundColor: 'black' }}>
-                        <img alt="Sample" src="https://picsum.photos/300/200" />
-                        <CardBody>
-                            <CardTitle tag="h5">Card title second row?</CardTitle>
-                            <CardText>Some quick example text to build on the card title and make up the bulk of the card‘s content.</CardText>
-                            <Button>Button</Button>
-                        </CardBody>
-                    </Card>
-                </Col>
+  const statsData = [
+    {
+      title: "Nombre d'utilisateurs",
+      value: dataStats ? dataStats.users : "Statistique indisponible",
+      loading: loadingStats,
+      color: "primary",
+    },
+    {
+      title: "Nombre de PixelBoard",
+      value: dataStats ? dataStats.boards : "Statistique indisponible",
+      loading: loadingStats,
+      color: "secondary",
+    },
+  ];
 
-                <Col xs="auto">
-                    <Card style={{ width: '18rem', backgroundColor: 'black' }}>
-                        <img alt="Sample" src="https://picsum.photos/300/200" />
-                        <CardBody>
-                            <CardTitle tag="h5">Card title</CardTitle>
-                            <CardText>Some quick example text to build on the card title and make up the bulk of the card‘s content.</CardText>
-                            <Button>Button</Button>
-                        </CardBody>
-                    </Card>
-                </Col>
+  return (
+    <Container className='my-5'>
+      <h1 className='text-center'>Bienvenu sur Reddot</h1>
+      {/* First Row of Cards stats */}
+      <Row className='justify-content-center my-5'>
+        {statsData.map((stat, index) => (
+          <Col xs='auto' key={index}>
+            <CardStat
+              title={stat.title}
+              value={stat.value}
+              loading={stat.loading}
+              color={stat.color}
+            />
+          </Col>
+        ))}
+      </Row>
 
-                <Col xs="auto">
-                    <Card style={{ width: '18rem', backgroundColor: 'black' }}>
-                        <img alt="Sample" src="https://picsum.photos/300/200" />
-                        <CardBody>
-                            <CardTitle tag="h5">Card title</CardTitle>
-                            <CardText>Some quick example text to build on the card title and make up the bulk of the card‘s content.</CardText>
-                            <Button>Button</Button>
-                        </CardBody>
-                    </Card>
-                </Col>
-            </Row>
-            {/* Third row finished boards*/}
-            <h3 className="text-center">Finished Boards</h3>
-            <Row className="justify-content-center">
-                <Col xs="auto">
-                    <Card style={{ width: '18rem', backgroundColor: 'black' }}>
-                        <img alt="Sample" src="https://picsum.photos/300/200" />
-                        <CardBody>
-                            <CardTitle tag="h5">Card title</CardTitle>
-                            <CardText>Some quick example text to build on the card title and make up the bulk of the card‘s content.</CardText>
-                            <Button>Button</Button>
-                        </CardBody>
-                    </Card>
-                </Col>
+      {/* Second Row of Cards lastest. To map them later and maybe implement a carousel*/}
+      <h3 className='text-center'>Derniere PixelBoard</h3>
+      <BoardCarousel
+        data={dataLast}
+        itemsPerPage={itemsPerPage}
+        loading={loadingLast}
+      />
 
-                <Col xs="auto">
-                    <Card style={{ width: '18rem', backgroundColor: 'black' }}>
-                        <img alt="Sample" src="https://picsum.photos/300/200" />
-                        <CardBody>
-                            <CardTitle tag="h5">Card title</CardTitle>
-                            <CardText>Some quick example text to build on the card title and make up the bulk of the card‘s content.</CardText>
-                            <Button>Button</Button>
-                        </CardBody>
-                    </Card>
-                </Col>
-
-                <Col xs="auto">
-                    <Card style={{ width: '18rem', backgroundColor: 'black' }}>
-                        <img alt="Sample" src="https://picsum.photos/300/200" />
-                        <CardBody>
-                            <CardTitle tag="h5">Card title</CardTitle>
-                            <CardText>Some quick example text to build on the card title and make up the bulk of the card‘s content.</CardText>
-                            <Button>Button</Button>
-                        </CardBody>
-                    </Card>
-                </Col>
-            </Row>
-        </div>
-    );
+      {/* Third row finished boards*/}
+      <h3 className='text-center'>PixelBoard terminées</h3>
+      <BoardCarousel
+        data={dataFinished}
+        itemsPerPage={itemsPerPage}
+        loading={loadingFinished}
+      />
+    </Container>
+  );
 }
 
 export default HomePage;

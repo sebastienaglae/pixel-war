@@ -1,0 +1,5 @@
+footer {
+  position: -webkit-sticky; /* For Safari */
+  position: sticky;
+  top: 100vh;
+}

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Container,
   Row,
@@ -13,15 +13,40 @@ import {
   Input,
   Button,
 } from "reactstrap";
+import { useRequest } from "@hooks/api";
+import { RoleContext } from "@contexts/RoleContext";
 
 function SignupPage() {
   const [formData, setFormData] = useState({
-    username: "",
+    nickname: "",
     email: "",
     password: "",
     confirmPassword: "",
+    bio: "",
   });
+
+  const { data, execute, error } = useRequest("/auth", {}, "post");
   const [passwordsMatch, setPasswordsMatch] = useState(false);
+  const navigate = useNavigate();
+  const { setToken } = useContext(RoleContext);
+  useEffect(() => {
+    if (data) {
+      setToken(data.token);
+      navigate("/");
+    }
+  }, [data]);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    execute("/register", {
+      data: {
+        nickname: formData.nickname,
+        email: formData.email,
+        password: formData.password,
+        bio: formData.bio,
+      },
+    });
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -35,13 +60,6 @@ function SignupPage() {
     const { password, confirmPassword } = formData;
     setPasswordsMatch(password === confirmPassword);
   }, [formData.password, formData.confirmPassword]);
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (passwordsMatch) {
-      console.log("Form submitted successfully.");
-    }
-  };
 
   return (
     <Container className='my-5'>
@@ -58,9 +76,11 @@ function SignupPage() {
                   <Input
                     type='text'
                     placeholder="Entrez votre nom d'utilisateur"
-                    name='username'
-                    id='username'
-                    value={formData.username}
+                    name='nickname'
+                    id='nickname'
+                    minLength='4'
+                    maxLength='16'
+                    value={formData.nickname}
                     onChange={handleChange}
                     required
                   />
@@ -101,23 +121,31 @@ function SignupPage() {
                     required
                   />
                 </FormGroup>
-
+                <FormGroup>
+                  <Label for='bio'>Bio</Label>
+                  <Input
+                    type='text'
+                    placeholder='Entrez votre bio'
+                    name='bio'
+                    id='bio'
+                    value={formData.bio}
+                    onChange={handleChange}
+                    required
+                  />
+                </FormGroup>
                 <p>
                   <Link to='/login'>Déjà inscrit ? Connectez-vous</Link>
                 </p>
-                <div>
-                  {!passwordsMatch && (
-                    <span className='error-message'>
-                      Passwords do not match
-                    </span>
-                  )}
+                <div className='my-2'>
+                  {!passwordsMatch && <strong>Passwords do not match</strong>}
                 </div>
+                {error && <p className='text-danger'>{error}</p>}
                 <Button
                   color='success'
                   type='submit'
                   disabled={!passwordsMatch}
                 >
-                  Se connecter
+                  S&apos;inscrire
                 </Button>
               </Form>
             </CardBody>

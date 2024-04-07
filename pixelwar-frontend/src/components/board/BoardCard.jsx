@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardImg, CardBody, CardTitle, CardText } from "reactstrap";
 
 function BoardCard({ board }) {
@@ -6,7 +5,12 @@ function BoardCard({ board }) {
     <Card>
       <div className='row no-gutters'>
         <div className='col-md-4'>
-          <CardImg top width='100%' src={board.imageUrl} alt='Board image' />
+          <CardImg
+            top
+            width='100%'
+            src={`${asset}/boards/${board.id}/thumbnail`}
+            alt='Board image'
+          />
         </div>
         <div className='col-md-8'>
           <CardBody>

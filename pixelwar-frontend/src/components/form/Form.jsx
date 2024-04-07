@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import "./Form.css";
+
 const Form = (props) => {
   const { apiUrl } = props;
   const BACKEND_URL = apiUrl;

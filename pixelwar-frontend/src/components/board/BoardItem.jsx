@@ -10,12 +10,9 @@ import {
   CardImg,
 } from "reactstrap";
 import { asset, downloadImage } from "@hooks/api";
-import { useRequest } from "@hooks/api";
-import { useEffect } from "react";
 
-function BoardItem({ data, onDelete }) {
+function BoardItem({ data }) {
   let navigate = useNavigate();
-  const { execute, success } = useRequest(`/boards/${data.id}`, {}, "delete");
   const handleDownload = () => {
     downloadImage(`/boards/${data.id}/thumbnail`);
   };
@@ -23,20 +20,6 @@ function BoardItem({ data, onDelete }) {
   const handleView = () => {
     navigate(`/board/${data.id}`);
   };
-
-  const handleEdit = () => {
-    navigate(`/admin/board/edit/${data.id}`);
-  };
-
-  const handleDelete = () => {
-    execute();
-  };
-
-  useEffect(() => {
-    if (success) {
-      onDelete(data.id);
-    }
-  }, [success]);
 
   const actions = [
     {
@@ -48,16 +31,6 @@ function BoardItem({ data, onDelete }) {
       color: "success",
       label: "Voir",
       onClick: handleView,
-    },
-    {
-      color: "primary",
-      label: "Modifier",
-      onClick: handleEdit,
-    },
-    {
-      color: "danger",
-      label: "Supprimer",
-      onClick: handleDelete,
     },
   ];
 
@@ -72,11 +45,13 @@ function BoardItem({ data, onDelete }) {
       />
       <div className='d-flex flex-column w-100'>
         <CardHeader>
-          <CardTitle>{data.name}</CardTitle>
+          <CardTitle>
+            [{data.status === "ended" ? "Terminé": "En cours"}] {data.name}
+          </CardTitle>
         </CardHeader>
         <CardBody>
           <CardText>{data.description}</CardText>
-          <div className='mt-2 d-block justify-content-end'>
+          <div className='mt-2 d-flex justify-content-end'>
             {actions.map((action, index) => (
               <Button
                 key={index}
@@ -90,8 +65,8 @@ function BoardItem({ data, onDelete }) {
           </div>
         </CardBody>
         <CardFooter color='text-muted'>
-          Dernière modification le {new Date(data.startAt).toLocaleDateString()}{" "}
-          par {data.owner.nickname}
+          Démarré le {new Date(data.startAt).toLocaleDateString()} par{" "}
+          {data.owner.nickname}
         </CardFooter>
       </div>
     </Card>

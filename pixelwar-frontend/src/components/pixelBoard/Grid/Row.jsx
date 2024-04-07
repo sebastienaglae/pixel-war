@@ -3,7 +3,7 @@ import "./Row.css";
 
 function Row({ y, boardData, selectedColor, row, onPixelPlace }) {
   return (
-    <div className='rowPixel'>
+    <div className='rowPixel d-flex'>
       {row.map((pixelColor, index) => (
         <Pixel
           key={index}
@@ -20,3 +20,5 @@ function Row({ y, boardData, selectedColor, row, onPixelPlace }) {
 }
 
 export default Row;
+
+

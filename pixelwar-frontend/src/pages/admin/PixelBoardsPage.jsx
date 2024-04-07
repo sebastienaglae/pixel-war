@@ -1,110 +1,116 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Container, Row, CardColumns, Button, Col } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import BoardItem from "@components/admin/BoardItem";
-import PaginationComponent from "@components/common/PaginationComponent";
-import SearchBar from "@components/common/SearchBar";
-import FilterSortComponent from "@components/common/FilterSortComponent";
+import PaginationComponent from "@components/pagination/PaginationComponent";
+import SearchBar from "@components/admin/SearchBar";
+import SortComponent from "@components/admin/SortComponent";
+import { useRequest } from "@hooks/api";
 
+const sortOptions = [
+  { label: "Nom (asc)", value: "name-asc" },
+  { label: "Nom (desc)", value: "name-desc" },
+  { label: "Date de création (asc)", value: "createAt-asc" },
+  { label: "Date de création (desc)", value: "createAt-desc" },
+  { label: "Date de début (asc)", value: "startAt-asc" },
+  { label: "Date de début (desc)", value: "startAt-desc" },
+  { label: "Date de fin (asc)", value: "endAt-asc" },
+  { label: "Date de fin (desc)", value: "endAt-desc" },
+  { label: "Résolution X (asc)", value: "resolution.x-asc" },
+  { label: "Résolution X (desc)", value: "resolution.x-desc" },
+  { label: "Résolution Y (asc)", value: "resolution.y-asc" },
+  { label: "Résolution Y (desc)", value: "resolution.y-desc" },
+];
 function PixelBoardListPage() {
-  let navigate = useNavigate();
-  const initialBoards = [
-    {
-      id: 1,
-      name: "Mon pixel board",
-      description: "Le meilleur pixel board de tous les temps",
-      image: "https://picsum.photos/200",
-      date: "2021-10-12T00:00:00.000Z",
-      author: "Test",
-    },
-    {
-      id: 2,
-      name: "Mon pixel board 2",
-      description: "Le meilleur pixel board de tous les temps",
-      image: "https://picsum.photos/200",
-      date: "2021-10-12T00:00:00.000Z",
-      author: "Test",
-    },
-  ];
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [filteredBoards, setFilteredBoards] = useState([]);
-  const [filterField, setFilterField] = useState("name");
-  const [pixelBoards, setPixelBoards] = useState(initialBoards);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const handleSearch = (searchTerm) => {
-    console.log("Searching for:", searchTerm);
-  };
-
-  const filterOptions = [
-    { label: "Name", value: "name" },
-    { label: "Author", value: "author" },
-  ];
-
-  const sortOptions = [
-    { label: "Ascending", value: "asc" },
-    { label: "Descending", value: "desc" },
-  ];
+  const [lastSearchTerm, setLastSearchTerm] = useState("");
+  const [sortValue, setSortValue] = useState("name-asc");
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data, execute } = useRequest("/boards", {}, "get");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const filtered = pixelBoards.filter((board) =>
-      board[filterField].toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredBoards(filtered);
-  }, [pixelBoards, searchTerm, filterField]);
+    execute("");
+  }, []);
 
-  const handleFilterChange = (filterValue) => {
-    console.log("Filtering with:", filterValue);
-  };
+  useEffect(() => {
+    if (searchTerm !== lastSearchTerm) {
+      setCurrentPage(1);
+    }
+    execute("", {
+      params: {
+        query: searchTerm,
+        sortType: sortValue,
+        page: currentPage,
+        limit: itemsPerPage,
+      },
+    });
+    setLastSearchTerm(searchTerm);
+  }, [searchTerm, sortValue, currentPage, itemsPerPage]);
 
-  const handleSortChange = (sortValue) => {
-    console.log("Sorting with:", sortValue);
+  const onDelete = (id) => {
+    execute("", {
+      params: {
+        query: searchTerm,
+        sortType: sortValue,
+        page: currentPage,
+        limit: itemsPerPage,
+      },
+    });
   };
 
   return (
-    <Container className='mt-5'>
-      <Row>
-        <SearchBar onSearch={handleSearch} />
-      </Row>
-      <Row>
-        <Col className="d-flex flex-row-reverse">
-          <Button
-            color='primary'
-            onClick={() => navigate("/admin/create-board")}
-          >
-            Créer un pixel board
-          </Button>
-        </Col>
-      </Row>
-      <Row>
-        <FilterSortComponent
-          onFilterChange={handleFilterChange}
-          onSortChange={handleSortChange}
-          filterOptions={filterOptions}
-          sortOptions={sortOptions}
-        />
-      </Row>
-      <Row>
-        <CardColumns>
-          {pixelBoards.map((board) => (
-            <BoardItem key={board.id} data={board} />
-          ))}
-        </CardColumns>
-      </Row>
-      <br />
-      <Row>
-        <PaginationComponent
-          itemsPerPage={itemsPerPage}
-          totalItems={pixelBoards.length}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-          onItemsPerPageChange={(newSize) => {
-            setItemsPerPage(newSize);
-            setCurrentPage(1);
-          }}
-        />
-      </Row>
+    <Container className='my-5'>
+      <Col sm='12' md={{ size: 10, offset: 1 }}>
+        <Row>
+          <h2 className='text-center mb-5'>Rechercher un pixel board</h2>
+        </Row>
+        <Row>
+          <SearchBar onSearch={setSearchTerm} />
+        </Row>
+        <Row>
+          <Col className='d-flex flex-row-reverse'>
+            <Button color='primary' onClick={() => navigate("/admin/board")}>
+              Créer un pixel board
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <SortComponent
+            sortOptions={sortOptions}
+            setSortValue={setSortValue}
+          />
+        </Row>
+        <Row>
+          {data && (
+            <CardColumns>
+              {data.boards.map((board) => (
+                <BoardItem key={board.id} data={board} onDelete={onDelete} />
+              ))}
+              {data.boards.length === 0 && (
+                <p className='text-center'>Aucun pixel board trouvé</p>
+              )}
+            </CardColumns>
+          )}
+        </Row>
+        <br />
+        <Row>
+          {data && (
+            <PaginationComponent
+              itemsPerPage={itemsPerPage}
+              totalItems={data.total}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={(newSize) => {
+                setItemsPerPage(newSize);
+                setCurrentPage(1);
+              }}
+              hasNextPage={data.hasNext}
+            />
+          )}
+        </Row>
+      </Col>
     </Container>
   );
 }
