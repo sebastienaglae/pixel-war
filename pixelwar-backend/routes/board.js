@@ -5,6 +5,7 @@ const BoardMdl = require('../models/board');
 const UserMdl = require('../models/user');
 const AuthService = require('../services/auth');
 const BoardService = require('../services/board');
+const mongoose = require("mongoose");
 
 const createBoardValidator = [
     validator.body('name', 'Name is required').isString().isLength({ min: 4, max: 16 }),
@@ -161,6 +162,10 @@ const fetchAndReturn = async (id, res) => {
 const router = express.Router();
 
 router.get('/:id', function(req, res, next) {
+    if (mongoose.Types.ObjectId.isValid(req.params.id) === false) {
+        res.status(404).json({error: 'Board not found'});
+        return;
+    }
     fetchAndReturn(req.params.id, res);
 });
 router.post('/', AuthService.RequireJWT, createBoardValidator, checkValidation, function(req, res, next) {
@@ -176,6 +181,11 @@ router.post('/', AuthService.RequireJWT, createBoardValidator, checkValidation, 
 router.put('/:id', AuthService.RequireJWT, updateBoardValidator, checkValidation, (req, res, next) => {
     const { name, startAt, endAt, resolution } = req.body;
 
+    if (mongoose.Types.ObjectId.isValid(req.params.id) === false) {
+        res.status(404).json({error: 'Board not found'});
+        return;
+    }
+
     BoardService.update(req.params.id, name, startAt, endAt, resolution, req.user.admin ? null : req.user.id)
         .then(success => {
             if (!success) {
@@ -190,6 +200,10 @@ router.put('/:id', AuthService.RequireJWT, updateBoardValidator, checkValidation
 });
 
 router.delete('/:id', AuthService.RequireJWT, function(req, res, next) {
+    if (mongoose.Types.ObjectId.isValid(req.params.id) === false) {
+        res.status(404).json({error: 'Board not found'});
+        return;
+    }
     BoardService.remove(req.params.id, req.user.admin ? null : req.user.id)
         .then(success => {
             if (success) {
@@ -204,6 +218,10 @@ router.delete('/:id', AuthService.RequireJWT, function(req, res, next) {
 });
 
 router.get('/:id/thumbnail', function(req, res, next) {
+    if (mongoose.Types.ObjectId.isValid(req.params.id) === false) {
+        res.status(404).json({error: 'Board not found'});
+        return;
+    }
     const format = req.query.format || 'png';
     if (format !== 'png' && format !== 'json') {
         return res.status(400).json({error: 'Invalid format'});
@@ -237,6 +255,10 @@ router.get('/:id/thumbnail', function(req, res, next) {
     }
 });
 router.get('/:id/heatmap', function(req, res, next) {
+    if (mongoose.Types.ObjectId.isValid(req.params.id) === false) {
+        res.status(404).json({error: 'Board not found'});
+        return;
+    }
     BoardService.getHeatmap(req.params.id)
         .then(heatmap => {
             if (!heatmap) {
@@ -297,6 +319,10 @@ router.get('/', async (req, res, next) => {
     });
 });
 router.delete('/:id', AuthService.RequireJWT, async (req, res, next) => {
+    if (mongoose.Types.ObjectId.isValid(req.params.id) === false) {
+        res.status(404).json({error: 'Board not found'});
+        return;
+    }
     const { id } = req.params;
     const board = await BoardMdl.findById(id);
     if (!board) {
