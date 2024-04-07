@@ -25,12 +25,12 @@ function PixelBoardCard({ board }) {
       />
       <CardBody>
         <CardTitle tag='h5'>{board.name}</CardTitle>
-        <CardText>Démarré le {board.startAt}</CardText>
-        <CardText>Nombre de pixel: {board.pixelsNumber}</CardText>
+        <CardText>Démarré le {new Date(board.startAt).toLocaleDateString()} à {new Date(board.startAt).toLocaleTimeString()}</CardText>
+        <CardText>Nombre de pixel: {board.pixels}</CardText>
         <CardText>Statut: {board.status}</CardText>
         <Button onClick={handleViewBoard}>Voir</Button>
       </CardBody>
-      <CardFooter>Par {board.owner}</CardFooter>
+      <CardFooter>Par {board.owner?.nickname}</CardFooter>
     </Card>
   );
 }
