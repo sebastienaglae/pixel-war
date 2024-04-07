@@ -69,7 +69,7 @@ module.exports = {
             if (!user) {
                 return res.status(401).json();
             }
-            const token = jwt.sign({ id: user.id, email: user.email, nickname: user.nickname }, JWT_SECRET, { expiresIn: '1d' });
+            const token = jwt.sign({ id: user.id, email: user.email, nickname: user.nickname, admin: user.admin }, JWT_SECRET, { expiresIn: '1d' });
             return res.json({ token });
         })(req, res, next);
     },

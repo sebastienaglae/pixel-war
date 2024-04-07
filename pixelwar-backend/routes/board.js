@@ -214,10 +214,28 @@ router.get('/:id/thumbnail', function(req, res, next) {
         });
 });
 router.get('/', async (req, res, next) => {
-    const { query, sortType, page, limit } = req.query;
+    const { query, status, sortType, page, limit } = req.query;
     const sortQuery = sort[sortType];
+    const filter = query ? { name: { $regex: query, $options: 'i' } } : {};
 
-    const boards = await BoardMdl.find(query || {})
+    if (status) {
+        const currentTime = Date.now();
+        switch (status) {
+            case 'active':
+                filter.startAt = { $lt: currentTime };
+                filter.endAt = { $gt: currentTime };
+                break;
+            case 'pending':
+                filter.startAt = { $gt: currentTime };
+                break;
+            case 'ended':
+                filter.endAt = { $lt: currentTime };
+                break;
+        }
+    }
+
+    const totalBoards = await BoardMdl.countDocuments(filter || {}).exec();
+    const boards = await BoardMdl.find(filter || {})
         .sort(sortQuery || { createdAt: -1 })
         .skip((page * limit) || 0)
         .limit(limit || 10)
@@ -229,10 +247,17 @@ router.get('/', async (req, res, next) => {
         return acc;
     }, {});
 
-    res.status(200).json(boards.map(board => {
-        board.owner = ownersMap[board.owner];
-        return formatBoard(board);
-    }));
+    res.status(200).json({
+        total: totalBoards,
+        page: (page || 0) + 1,
+        limit: limit || 10,
+        hasNext: totalBoards > (page + 1) * (limit || 10),
+        hasPrev: page > 0,
+        boards: boards.map(board => {
+            board.owner = ownersMap[board.owner];
+            return formatBoard(board);
+        })
+    });
 });
 
 module.exports = router;
