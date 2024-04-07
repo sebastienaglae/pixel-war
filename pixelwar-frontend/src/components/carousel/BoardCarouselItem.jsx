@@ -7,6 +7,7 @@ import {
   Placeholder,
 } from "reactstrap";
 import { useNavigate } from "react-router-dom";
+import { asset } from "@hooks/api";
 
 function BoardCarouselItem({ item, loading = true }) {
   const navigate = useNavigate();
@@ -21,8 +22,8 @@ function BoardCarouselItem({ item, loading = true }) {
       color='dark'
     >
       <img
-        alt='Sample'
-        src={item.image}
+        alt='PixelBoard'
+        src={asset(`/boards/${item.id}/thumbnail`)}
         className='w-100'
         style={{ height: "200px", objectFit: "cover" }}
       />

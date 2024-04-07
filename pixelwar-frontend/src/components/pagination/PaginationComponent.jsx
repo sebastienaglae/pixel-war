@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Pagination,
   PaginationItem,
@@ -22,10 +22,14 @@ function PaginationComponent({
   currentPage,
   onPageChange,
   onItemsPerPageChange,
+  hasNextPage
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [pageCount, setPageCount] = useState(0);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-  const pageCount = Math.ceil(totalItems / itemsPerPage);
+  useEffect(() => {
+    setPageCount(Math.ceil(totalItems / itemsPerPage));
+  }, [totalItems, itemsPerPage]);
 
   return (
     <>
@@ -54,7 +58,7 @@ function PaginationComponent({
           </PaginationLink>
         </PaginationItem>
         <PaginationItem disabled={currentPage <= 1}>
-          <PaginationLink onClick={() => onPageChange(currentPage - 1)}>
+          <PaginationLink onClick={() => onPageChange(+currentPage - 1)}>
             <FontAwesomeIcon icon={faAngleLeft} />
           </PaginationLink>
         </PaginationItem>
@@ -63,12 +67,12 @@ function PaginationComponent({
           <PaginationLink>{currentPage}</PaginationLink>
         </PaginationItem>
 
-        <PaginationItem disabled={currentPage >= pageCount}>
-          <PaginationLink onClick={() => onPageChange(currentPage + 1)}>
+        <PaginationItem disabled={!hasNextPage}>
+          <PaginationLink onClick={() => onPageChange(+currentPage + 1)}>
             <FontAwesomeIcon icon={faAngleRight} />
           </PaginationLink>
         </PaginationItem>
-        <PaginationItem disabled={currentPage >= pageCount}>
+        <PaginationItem disabled={!hasNextPage}>
           <PaginationLink onClick={() => onPageChange(pageCount)}>
             <FontAwesomeIcon icon={faAngleDoubleRight} />
           </PaginationLink>

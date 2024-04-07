@@ -1,6 +1,6 @@
 import PixelBoardComponent from "@components/pixelBoard/PixelBoardComponent";
-import { useParams } from "react-router-dom";
-import { Container, Placeholder } from "reactstrap";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button, Container, Placeholder } from "reactstrap";
 import { useEffect, useState } from "react";
 import { useApi } from "@hooks/api";
 
@@ -13,11 +13,12 @@ function BoardPage() {
     resolution: {
       x: 10,
       y: 10,
-    }
+    },
   };
-  const { id } = useParams(); // Access id from URL
+  const { id } = useParams(); // Access id from URL=
   const [timer, setTimer] = useState("");
   const { loading } = useApi(`/boards/${id}`);
+  const navigate = useNavigate();
 
   const calculateTimeLeft = () => {
     const now = new Date();
@@ -42,6 +43,10 @@ function BoardPage() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleHeatmap = () => {
+    navigate(`/board/heatmap/${id}`);
+  };
+
   return (
     <Container className='my-5'>
       <h2 className='text-center mb-5'>
@@ -65,6 +70,13 @@ function BoardPage() {
         </Placeholder>
       </p>
       <PixelBoardComponent id={id} loading={loading} />
+      <Button
+        color='primary'
+        className='mt-5 d-flex justify-content-center mx-auto'
+        onClick={handleHeatmap}
+      >
+        Voir la heatmap
+      </Button>
     </Container>
   );
 }

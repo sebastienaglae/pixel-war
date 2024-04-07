@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Container,
   Card,
@@ -12,21 +12,36 @@ import {
   Label,
   Input,
 } from "reactstrap";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useRequest } from "@hooks/api";
+import { RoleContext } from "@contexts/RoleContext";
 
 function LoginPage() {
-  const [loginData, setLoginData] = useState({
-    username: "",
+  const [formData, setFormData] = useState({
+    nickname: "",
     password: "",
   });
+
+  const { data, execute, error } = useRequest("/auth", {}, "post");
+  const navigate = useNavigate();
+  const { setToken } = useContext(RoleContext);
+  useEffect(() => {
+    if (data) {
+      setToken(data.token);
+      navigate("/");
+    }
+  }, [data]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Form submitted successfully.");
+    execute("/login", {
+      data: formData,
+    });
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setLoginData((prevData) => ({
+    setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
@@ -43,13 +58,15 @@ function LoginPage() {
               </CardTitle>
               <Form onSubmit={handleSubmit}>
                 <FormGroup>
-                  <Label for='username'>Nom d&apos;utilisateur</Label>
+                  <Label for='nickname'>Nom d&apos;utilisateur</Label>
                   <Input
                     type='text'
                     placeholder='Entrez votre nom d&apos;utilisateur'
-                    name='username'
-                    id='username'
-                    value={loginData.username}
+                    name='nickname'
+                    minLength='4'
+                    maxLength='16'
+                    id='nickname'
+                    value={formData.nickname}
                     onChange={handleChange}
                     required
                   />
@@ -61,7 +78,7 @@ function LoginPage() {
                     placeholder='Entrez votre mot de passe'
                     name='password'
                     id='password'
-                    value={loginData.password}
+                    value={formData.password}
                     onChange={handleChange}
                     required
                   />
@@ -69,6 +86,7 @@ function LoginPage() {
                 <p>
                   <Link to='/signup'>Créer un compte</Link>
                 </p>
+                {error && <p className='text-danger'>{error}</p>}
                 <Button color='success' type='submit'>
                   Se connecter
                 </Button>

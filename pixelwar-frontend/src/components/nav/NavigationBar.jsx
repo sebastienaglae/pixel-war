@@ -8,17 +8,17 @@ import {
   FaSearch,
   FaPlus,
 } from "react-icons/fa";
-import { RoleContext } from "@contexts/RoleContext"; // Adjust the import path as needed
+import { RoleContext } from "@contexts/RoleContext"; 
 import NavigationItem from "./NavigationItem";
 
 function NavigationBar() {
-  const [isOpen, setIsOpen] = useState(false); // State to control the collapse
-  const { isAdmin, isLoggedIn } = useContext(RoleContext);
+  const [isOpen, setIsOpen] = useState(false);
+  const { isAdmin, isLoggedIn, reset } = useContext(RoleContext);
 
-  const toggle = () => setIsOpen(!isOpen); // Toggle function for the NavbarToggler
+  const toggle = () => setIsOpen(!isOpen); 
 
   const onLogout = () => {
-    console.log("Logout");
+    reset();
   };
 
   return (
@@ -37,25 +37,23 @@ function NavigationBar() {
             <>
               <NavigationItem
                 to='/login'
-                title="S'inscrire"
+                title='Se connecter'
                 icon={<FaSignInAlt />}
               />
               <NavigationItem
                 to='/signup'
-                title='Se connecter'
+                title="S'inscrire"
                 icon={<FaSignInAlt />}
               />
             </>
           )}
-          {
-            isLoggedIn() && (
-              <NavigationItem
-                to='/profile'
-                title='Profil'
-                icon={<FaSignInAlt />}
-              />
-            )
-          }
+          {isLoggedIn() && (
+            <NavigationItem
+              to='/profile'
+              title='Profil'
+              icon={<FaSignInAlt />}
+            />
+          )}
           {isLoggedIn() && (
             <NavigationItem
               onClick={onLogout}

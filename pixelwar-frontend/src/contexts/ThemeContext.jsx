@@ -22,7 +22,7 @@ export const ThemeProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem("theme") || "dark";
     const savedThemePreference =
       localStorage.getItem("themePreference") || "auto";
 
@@ -30,26 +30,25 @@ export const ThemeProvider = ({ children }) => {
       setTheme(getPreferredTheme());
       setThemePreference("auto");
     } else {
-      setTheme(savedTheme || "dark");
+      setTheme(savedTheme);
       setThemePreference("user");
     }
   }, []);
 
   useEffect(() => {
-    let currentTheme = theme;
+    let currentTheme = localStorage.getItem("theme") || "dark";
     if (themePreference === "auto") {
       currentTheme = getPreferredTheme();
     }
     setTheme(currentTheme);
-    if (!theme || !themePreference) return;
+    if (!themePreference) return;
     localStorage.setItem("themePreference", themePreference);
   }, [themePreference]);
 
   useEffect(() => {
-    if (theme) {
-      document.body.className = `${theme}-mode`;
+    if (!theme) return;
+    document.body.className = `${theme}-mode`;
     localStorage.setItem("theme", theme);
-    }
   }, [theme]);
 
   const manualSetTheme = (newTheme) => {

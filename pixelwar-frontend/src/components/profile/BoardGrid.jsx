@@ -26,7 +26,7 @@ function BoardGrid({ userBoards, totalPixels, loading = true }) {
       </Col>
       <CardBody>
         <Row>
-          {userBoards.map((board) => (
+          {userBoards && userBoards.contributions.map((board) => (
             <Col sm={4} key={board.id}>
               <PixelBoardCard board={board} />
             </Col>

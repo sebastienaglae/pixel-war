@@ -5,6 +5,7 @@ import PaginationComponent from "@components/pagination/PaginationComponent";
 import BoardItem from "@components/board/BoardItem";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRequest } from "@hooks/api";
 
 function FindBoardPage() {
   const sortOptions = [
@@ -21,31 +22,31 @@ function FindBoardPage() {
     { label: "Résolution Y (asc)", value: "resolution.y-asc" },
     { label: "Résolution Y (desc)", value: "resolution.y-desc" },
   ];
-  const initialBoards = [
-    {
-      id: 1,
-      name: "Mon pixel board",
-      description: "Le meilleur pixel board de tous les temps",
-      image: "https://picsum.photos/200",
-      date: "2021-10-12T00:00:00.000Z",
-    },
-  ];
+
   const [searchTerm, setSearchTerm] = useState("");
   const [lastSearchTerm, setLastSearchTerm] = useState("");
   const [sortValue, setSortValue] = useState("name-asc");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pixelBoards, setPixelBoards] = useState(initialBoards);
+  const { data, execute } = useRequest("/boards", {}, "get");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    execute("");
+  }, []);
 
   useEffect(() => {
     if (searchTerm !== lastSearchTerm) {
       setCurrentPage(1);
     }
-    console.log("Searching with:", searchTerm);
-    console.log("Sorting with:", sortValue);
-    console.log("Current page:", currentPage);
-    console.log("Items per page:", itemsPerPage);
+    execute("", {
+      params: {
+        query: searchTerm,
+        sortType: sortValue,
+        page: currentPage,
+        limit: itemsPerPage,
+      },
+    });
     setLastSearchTerm(searchTerm);
   }, [searchTerm, sortValue, currentPage, itemsPerPage]);
 
@@ -71,28 +72,33 @@ function FindBoardPage() {
             setSortValue={setSortValue}
           />
         </Row>
-        <Row>
-          <CardColumns>
-            {pixelBoards.map((board) => (
-              <BoardItem key={board.id} data={board} />
-            ))}
-            {pixelBoards.length === 0 && (
-              <p className='text-center'>Aucun pixel board trouvé</p>
-            )}
-          </CardColumns>
-        </Row>
+        {data && (
+          <Row>
+            <CardColumns>
+              {data.boards.map((board) => (
+                <BoardItem key={board.id} data={board} />
+              ))}
+              {data.boards.length === 0 && (
+                <p className='text-center'>Aucun pixel board trouvé</p>
+              )}
+            </CardColumns>
+          </Row>
+        )}
         <br />
         <Row>
-          <PaginationComponent
-            itemsPerPage={itemsPerPage}
-            totalItems={pixelBoards.length}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-            onItemsPerPageChange={(newSize) => {
-              setItemsPerPage(newSize);
-              setCurrentPage(1);
-            }}
-          />
+          {data && (
+            <PaginationComponent
+              itemsPerPage={itemsPerPage}
+              totalItems={data.total}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={(newSize) => {
+                setItemsPerPage(newSize);
+                setCurrentPage(1);
+              }}
+              hasNextPage={data.hasNext}
+            />
+          )}
         </Row>
       </Col>
     </Container>

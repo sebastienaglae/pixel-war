@@ -9,16 +9,15 @@ import {
   CardTitle,
   CardImg,
 } from "reactstrap";
+import { asset, downloadImage } from "@hooks/api";
 
 function BoardItem({ data }) {
   let navigate = useNavigate();
-
   const handleDownload = () => {
-    console.log("Download action");
+    downloadImage(`/boards/${data.id}/thumbnail`);
   };
 
   const handleView = () => {
-    console.log("View action");
     navigate(`/board/${data.id}`);
   };
 
@@ -39,14 +38,16 @@ function BoardItem({ data }) {
     <Card className='d-flex flex-row' color='dark' text='white'>
       <CardImg
         variant='left'
-        src={data.image || "https://picsum.photos/200"}
+        src={asset("/boards/" + data.id + "/thumbnail")}
         alt='random'
         style={{ objectFit: "cover", width: "200px" }}
         className='rounded-start'
       />
       <div className='d-flex flex-column w-100'>
         <CardHeader>
-          <CardTitle>{data.name}</CardTitle>
+          <CardTitle>
+            [{data.status === "ended" ? "Terminé": "En cours"}] {data.name}
+          </CardTitle>
         </CardHeader>
         <CardBody>
           <CardText>{data.description}</CardText>
@@ -64,8 +65,8 @@ function BoardItem({ data }) {
           </div>
         </CardBody>
         <CardFooter color='text-muted'>
-          Dernière modification le {new Date(data.date).toLocaleDateString()}{" "}
-          par {data.author}
+          Démarré le {new Date(data.startAt).toLocaleDateString()} par{" "}
+          {data.owner.nickname}
         </CardFooter>
       </div>
     </Card>
