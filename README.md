@@ -3,7 +3,7 @@
 ## Introduction
 
 Ce projet vise à développer une application de dessin collaboratif en pixel art, permettant aux utilisateurs de colorier un pixel toutes les quelques minutes ou secondes. Inspiré par des projets tels que Reddit Place, cette application permettra la création collaborative d'œuvres d'art pixélisées avec une variété de fonctionnalités pour gérer les contributions, visualiser l'avancement en temps réel et exporter le résultat final.
-Le projet est accesible sur [https://assets.atrasis.net/pixel-war/video-frontend.mp4](https://pixel-war.atrasis.net/) (Hébergé chez Hetzner Cloud)
+Le projet est accesible sur [https://pixel-war.atrasis.net](https://pixel-war.atrasis.net/) (Hébergé chez Hetzner Cloud)
 
 ## Comptes
 Administrateur
