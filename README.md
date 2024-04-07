@@ -5,6 +5,17 @@
 Ce projet vise à développer une application de dessin collaboratif en pixel art, permettant aux utilisateurs de colorier un pixel toutes les quelques minutes ou secondes. Inspiré par des projets tels que Reddit Place, cette application permettra la création collaborative d'œuvres d'art pixélisées avec une variété de fonctionnalités pour gérer les contributions, visualiser l'avancement en temps réel et exporter le résultat final.
 Le projet est accesible sur [https://assets.atrasis.net/pixel-war/video-frontend.mp4](https://pixel-war.atrasis.net/) (Hébergé chez Hetzner Cloud)
 
+## Comptes
+Administrateur
+- Nom d'utilisateur: admin
+- Mot de passe: admin
+Utilisateur 1
+- Nom d'utilisateur: user1
+- Mot de passe: user1
+Utilisateur 2
+- Nom d'utilisateur: user2
+- Mot de passe: user2
+
 ## Technologies Utilisées
 
 - **Front-end :** React (avec Reactstrap pour les composants Bootstrap), utilisation de SASS pour le styling, Axios pour les requêtes HTTP, custom hooks, et context pour la gestion d'état.
@@ -35,8 +46,8 @@ Le projet est accesible sur [https://assets.atrasis.net/pixel-war/video-frontend
 
 ### Back
 
-- **POST** [/login](https://api.pixel-war.atrasis.net/login) Permet à un utilisateur de se connecter.
-- **POST** [/register](https://api.pixel-war.atrasis.net/register) Permet à un utilisateur de s'inscrire.
+- **POST** [/auth/login](https://api.pixel-war.atrasis.net/auth/login) Permet à un utilisateur de se connecter.
+- **POST** [/auth/register](https://api.pixel-war.atrasis.net/auth/register) Permet à un utilisateur de s'inscrire.
 - **GET** [/boards/:id](https://api.pixel-war.atrasis.net/boards/:id) Permet de récupérer les détails d'un tableau spécifique.
 - **POST** [/boards](https://api.pixel-war.atrasis.net/boards) Permet de créer un nouveau tableau.
 - **PUT** [/boards/:id](https://api.pixel-war.atrasis.net/boards/:id) Permet de mettre à jour les détails d'un tableau spécifique.
@@ -44,7 +55,7 @@ Le projet est accesible sur [https://assets.atrasis.net/pixel-war/video-frontend
 - **GET** [/boards/:id/thumbnail](https://api.pixel-war.atrasis.net/boards/:id/thumbnail) Permet de récupérer un aperçu d'un tableau spécifique.
 - **GET** [/boards/:id/heatmap](https://api.pixel-war.atrasis.net/boards/:id/heatmap) Permet de récupérer une carte thermique d'un tableau spécifique.
 - **GET** [/boards](https://api.pixel-war.atrasis.net/boards) Permet de récupérer une liste de tableaux en fonction de différents filtres, triée selon différents critères.
-- **GET** [/stats](https://api.pixel-war.atrasis.net/stats) Permet de récupérer les statistiques du tableau de bord, telles que le nombre d'utilisateurs et le nombre de tableaux.
+- **GET** [/dashboard/stats](https://api.pixel-war.atrasis.net/dashboard/stats) Permet de récupérer les statistiques du tableau de bord, telles que le nombre d'utilisateurs et le nombre de tableaux.
 - **GET** [/users/me](https://api.pixel-war.atrasis.net/users/me) Permet de récupérer les informations de l'utilisateur actuellement authentifié.
 - **GET** [/users/:id](https://api.pixel-war.atrasis.net/users/:id) Permet de récupérer les informations d'un utilisateur spécifique.
 - **PUT** [/users/me](https://api.pixel-war.atrasis.net/users/me) Permet de mettre à jour les informations de l'utilisateur actuellement authentifié.
@@ -72,9 +83,9 @@ _Bonus_
 
 - [x] Utilisation de websockets pour la mise à jour en temps réel
 - [ ] SuperPixelBoard (PixelBoard géant)
-- [x] Exportation des PixelBoards en images (png)
+- [x] Exportation des PixelBoards en images en png
 - [x] Heatmap des contributions
-- [x] Déploiement sur Cloud (Hetzner Cloud)
+- [x] Déploiement sur Hetzner Cloud
 
 ## Pages
 
@@ -150,7 +161,7 @@ Github kanban
 
 ## Commandes
 
-### Back
+### Front
 
 #### Installation
 
@@ -164,10 +175,11 @@ npm i
 #### Lancement
 
 ```sh
+npm run start
 docker-compose up
 ```
 
-### Front
+### Back
 
 #### Installation
 
