@@ -2,8 +2,8 @@ import { useAsync } from "react-async-hook";
 import axios from "axios";
 import { useCallback, useState, useContext } from "react";
 import { RoleContext } from "@contexts/RoleContext";
+import { API_URL as apiUrl } from "@config/config";
 
-const apiUrl = "http://127.0.0.1:3000";
 export const useApi = (url, method = "get", options = {}) => {
   const { token } = useContext(RoleContext);
 

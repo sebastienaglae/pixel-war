@@ -22,7 +22,7 @@ function PixelBoardComponent({ id, colorTable }) {
       return Math.min(25, maxSizeBasedOnHeight, maxSizeBasedOnWidth);
     };
   const [delay, setDelay] = useState(0);
-  const socketUrl = `ws://${WS_URL}/boards-ws/${id}?token=${token}`;
+  const socketUrl = `${WS_URL}/boards-ws/${id}?token=${token}`;
   if (socket === null || socket.url !== socketUrl) {
     if (socket !== null) {
       socket.close();
