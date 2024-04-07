@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Card,
   CardBody,
@@ -8,6 +8,7 @@ import {
   Label,
   CardGroup,
   Placeholder,
+  Form,
 } from "reactstrap";
 import EditableField from "./EditableField";
 import { ThemeContext } from "@contexts/ThemeContext";
@@ -18,11 +19,26 @@ function UserInfo({ userData, loading = true }) {
   const { theme, setTheme, themePreference, setThemePreference } =
     useContext(ThemeContext);
   const { success, execute } = useRequest("/users", {}, "put");
+  const [formData, setFormData] = useState({}); // State to hold form data
 
-  const handleEditClick = () => {
+  useEffect(() => {
+    // Populate form data with user data initially
+    if (userData) {
+      setFormData({
+        nickname: userData.nickname,
+        email: userData.email,
+        bio: userData.bio,
+      });
+    }
+  }, [userData]);
+
+  const handleEditClick = (e) => {
+    e.preventDefault();
     if (isEditing) {
+      console.log(formData);
       execute("/me", {
-        data: userData,
+        method: "PUT",
+        data: formData, // Send updated form data
       });
     }
 
@@ -37,26 +53,35 @@ function UserInfo({ userData, loading = true }) {
     setThemePreference(themePreference === "auto" ? "user" : "auto");
   };
 
+  const handleFieldChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   const userInfoFields = [
     {
       title: "Nom d'utilisateur",
-      value: () => userData.nickname,
+      value: formData.nickname || "",
       inputType: "text",
       inputName: "nickname",
     },
     {
       title: "Email",
-      value: () => userData.email,
+      value: formData.email || "",
       inputType: "email",
       inputName: "email",
     },
     {
       title: "Bio",
-      value: () => userData.bio,
+      value: formData.bio || "",
       inputType: "text",
       inputName: "bio",
     },
   ];
+
   return (
     <Card color='background-secondary' style={{ width: "300px" }}>
       <CardHeader style={{ fontWeight: "bold" }}>
@@ -76,38 +101,41 @@ function UserInfo({ userData, loading = true }) {
             <EditableField
               key={index}
               isEditing={isEditing}
-              value={field.value()}
+              value={field.value}
               title={field.title}
               inputType={field.inputType}
               inputName={field.inputName}
               loading={loading}
+              onChange={handleFieldChange} // Pass the onChange handler
             />
           ))}
-        <CardGroup className='my-2 d-flex flex-column'>
-          <div style={{ fontWeight: "bold" }}>Theme</div>
-          <Label check>
-            <Input
-              type='checkbox'
-              checked={theme == "dark"}
-              onChange={toggleTheme}
-            />{" "}
-            {theme == "dark" ? "Theme Sombre" : "Theme Clair"}
-          </Label>
-          <Label check>
-            <Input
-              type='checkbox'
-              checked={themePreference == "auto"}
-              onChange={toggleThemePreference}
-              disabled={loading}
-            />{" "}
-            {themePreference == "auto" ? "Automatique" : "Utilisateur"}
-          </Label>
-        </CardGroup>
-        <div style={{ display: "flex", justifyContent: "flex-left" }}>
-          <Button onClick={handleEditClick} disabled={loading}>
-            {isEditing ? "Sauvegarder" : "Modifier"}
-          </Button>
-        </div>
+        <Form onSubmit={handleEditClick}>
+          <CardGroup className='my-2 d-flex flex-column'>
+            <div style={{ fontWeight: "bold" }}>Theme</div>
+            <Label check>
+              <Input
+                type='checkbox'
+                checked={theme === "dark"}
+                onChange={toggleTheme}
+              />{" "}
+              {theme === "dark" ? "Theme Sombre" : "Theme Clair"}
+            </Label>
+            <Label check>
+              <Input
+                type='checkbox'
+                checked={themePreference === "auto"}
+                onChange={toggleThemePreference}
+                disabled={loading}
+              />{" "}
+              {themePreference === "auto" ? "Automatique" : "Utilisateur"}
+            </Label>
+          </CardGroup>
+          <div style={{ display: "flex", justifyContent: "flex-left" }}>
+            <Button type='submit' disabled={loading}>
+              {isEditing ? "Sauvegarder" : "Modifier"}
+            </Button>
+          </div>
+        </Form>
       </CardBody>
     </Card>
   );

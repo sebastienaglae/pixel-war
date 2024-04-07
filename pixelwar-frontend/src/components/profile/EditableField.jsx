@@ -7,9 +7,10 @@ function EditableField({
   inputName,
   title,
   loading = true,
+  onChange,
 }) {
   return (
-    <CardGroup className="my-2 d-flex flex-column">
+    <CardGroup className='my-2 d-flex flex-column'>
       <div style={{ fontWeight: "bold" }}>
         <Placeholder animation={loading ? null : "wave"}>{title}</Placeholder>
       </div>
@@ -21,6 +22,7 @@ function EditableField({
           id={inputName}
           disabled={loading}
           required
+          onChange={onChange}
         />
       ) : (
         <CardText>

@@ -1,27 +1,96 @@
 import { useEffect, useState } from "react";
 import "./PixelBoardComponent.css";
-import Grid from "@components/pixelBoard/Grid/Grid";
-import ColorPicker from "@components/pixelBoard/ColorPicker/ColorPicker";
-import StatsNav from "@components/pixelBoard/StatsNav/StatsNav";
+import Grid from "./Grid/Grid";
+import ColorPicker from "./ColorPicker/ColorPicker";
+import StatsNav from "./StatsNav/StatsNav";
+import PixelSocket from "../../api/PixelSocket";
 
-function PixelBoardComponent({ id, loading }) {
-  const computePixelSize = (rowCount, columnCount) => {
-    const maxSizeBasedOnHeight = Math.floor(
-      (window.innerHeight * 0.7) / rowCount
-    );
-    const maxSizeBasedOnWidth = Math.floor(
-      (window.innerWidth * 0.7) / columnCount
-    );
+let socket = null;
 
-    return Math.min(25, maxSizeBasedOnHeight, maxSizeBasedOnWidth);
+function PixelBoardComponent({ id, colorTable }) {
+  const [size, setSize] = useState([50, 50]); // [width, height]
+    const computePixelSize = (rowCount, columnCount) => {
+      const maxSizeBasedOnHeight = Math.floor(
+        (window.innerHeight * 0.7) / rowCount
+      );
+      const maxSizeBasedOnWidth = Math.floor(
+        (window.innerWidth * 0.7) / columnCount
+      );
+
+      return Math.min(25, maxSizeBasedOnHeight, maxSizeBasedOnWidth);
+    };
+  const [delay, setDelay] = useState(0);
+  const socketUrl = `ws://localhost:3000/boards-ws/${id}`;
+  if (socket === null || socket.url !== socketUrl) {
+    if (socket !== null) {
+      socket.close();
+    }
+    socket = new PixelSocket(socketUrl, colorTable);
+  }
+  const resizeGrid = (width, height) => {
+    if (size[0] === width && size[1] === height) {
+      return;
+    }
+    setSize([width, height]);
+    setGrid((prevGrid) => {
+      const newGrid = new Array(height)
+        .fill(null)
+        .map(() => new Array(width).fill("#FFFFFF"));
+      for (let y = 0; y < Math.min(height, size[1]); y++) {
+        for (let x = 0; x < Math.min(width, size[0]); x++) {
+          newGrid[y][x] = prevGrid[y][x];
+        }
+      }
+      return newGrid;
+    });
   };
+  socket.callback = {
+    onResize: (data) => {
+      resizeGrid(data.x, data.y);
+    },
+    onPixelUpdate: (data) => {
+      const { x, y, color } = data;
+      setGrid((prevGrid) => {
+        const newGrid = [...prevGrid];
+        newGrid[y][x] = colorTable[color];
+        return newGrid;
+      });
+    },
+    onHeaderUpdate: (data) => {
+      console.log("onHeaderUpdate", data);
+    },
+    onDelete: () => {
+      console.log("onDelete");
+    },
+    onPixelsData: (width, height, pixels) => {
+      resizeGrid(width, height);
+      setGrid((prevGrid) => {
+        const newGrid = [...prevGrid];
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            newGrid[y][x] = colorTable[pixels[y * width + x]];
+          }
+        }
+        return newGrid;
+      });
+    },
+    onPersonalDelay: (delay) => {
+      console.log("onPersonalDelay", delay);
+      if (delay > 0) {
+        setDelay(delay);
+      }
+    },
+  };
+  const colorPalette = new Array();
+  for (let i = 1; i < colorTable.length; i++) {
+    colorPalette.push(colorTable[i]);
+  }
 
   var data = {
-    width: 50,
-    height: 50,
-    delay: 5,
-    pixelSize: computePixelSize(50, 50),
-    colors: ["#131313", "#ffffff", "#ff0000", "#00ff00", "#0000ff"],
+    width: size[0],
+    height: size[1],
+    pixelSize: computePixelSize(size[0], size[1]),
+    colors: colorPalette,
   };
 
   const generateInitialGrid = (rows, cols, defaultColor) => {
@@ -33,56 +102,45 @@ function PixelBoardComponent({ id, loading }) {
     return grid;
   };
 
-  const [selectedColor, setSelectedColor] = useState("#ffffff");
+  const [selectedColor, setSelectedColor] = useState("#FFFFFF");
   const [boardData] = useState(data);
   const [grid, setGrid] = useState(
-    generateInitialGrid(boardData.height, boardData.width, selectedColor)
+    generateInitialGrid(boardData.height, boardData.width, "#FFFFFF")
   );
-  const [logs, setLogs] = useState([]);
-  const [canPlace, setCanPlace] = useState(true);
 
-  //oresize recompute pixel size
-  useEffect(() => {
-    const handleResize = () => {
-      const newSize = computePixelSize(boardData.height, boardData.width);
-      data.pixelSize = newSize;
-      setGrid((prevGrid) => {
-        const newGrid = [...prevGrid];
-        newGrid[0][0] = "#fff";
-        return newGrid;
-      });
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [boardData]);
-
-  useEffect(() => {
-    setGrid((prevGrid) => {
-      const newGrid = [...prevGrid];
-      newGrid[0][0] = "#fff";
-      return newGrid;
-    });
-  }, [boardData, selectedColor]);
-
-  const onCooldownComplete = () => {
-    setCanPlace(true);
+  const onPixelPlace = (x, y) => {
+    if (delay > 0) {
+      return;
+    }
+    socket.setPixel(x, y, colorPalette.indexOf(selectedColor));
   };
 
+  // decrement delay every second
+  useEffect(() => {
+    if (delay > 0) {
+      const interval = setInterval(() => {
+        setDelay((prevDelay) => prevDelay - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [delay]);
+
   return (
-    <div className='pixelBoard d-flex flex-column w-100 h-100'>
+    <div className='d-flex flex-column'>
       <div className='d-flex justify-content-center m-auto'>
-        <Grid boardData={boardData} selectedColor={selectedColor} grid={grid} />
+        <Grid
+          boardData={boardData}
+          delay={delay}
+          selectedColor={selectedColor}
+          grid={grid}
+          onPixelPlace={onPixelPlace}
+        />
       </div>
-      <StatsNav logs={logs} />
       <ColorPicker
         colors={data.colors}
         picked={selectedColor}
         setPicked={setSelectedColor}
-        delay={data.delay}
-        canPlace={canPlace}
-        onCooldownComplete={onCooldownComplete}
-        loading={loading}
+        delay={delay}
       />
     </div>
   );

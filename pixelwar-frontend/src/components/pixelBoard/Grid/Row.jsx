@@ -1,7 +1,7 @@
 import Pixel from "./Pixel";
 import "./Row.css";
 
-function Row({ y, boardData, selectedColor, row }) {
+function Row({ y, boardData, selectedColor, row, onPixelPlace }) {
   return (
     <div className='rowPixel d-flex'>
       {row.map((pixelColor, index) => (
@@ -12,6 +12,7 @@ function Row({ y, boardData, selectedColor, row }) {
           boardData={boardData}
           selectedColor={selectedColor}
           color={pixelColor}
+          onPixelPlace={onPixelPlace}
         />
       ))}
     </div>
@@ -19,3 +20,5 @@ function Row({ y, boardData, selectedColor, row }) {
 }
 
 export default Row;
+
+

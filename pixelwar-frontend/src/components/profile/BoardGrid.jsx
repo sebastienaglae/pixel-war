@@ -15,7 +15,7 @@ function BoardGrid({ userBoards, totalPixels, loading = true }) {
       <CardHeader>
         <strong>PixelBoards</strong>
       </CardHeader>
-      <Col sm={4} className='pt-2 ps-3'>
+      {/* <Col sm={4} className='pt-2 ps-3'>
         <Card className='my-2 p-2 text-bold' color='background'>
           <CardText>
             <Placeholder animation={loading ? null : "wave"}>
@@ -23,7 +23,7 @@ function BoardGrid({ userBoards, totalPixels, loading = true }) {
             </Placeholder>
           </CardText>
         </Card>
-      </Col>
+      </Col> */}
       <CardBody>
         <Row>
           {userBoards && userBoards.contributions.map((board) => (
@@ -31,6 +31,10 @@ function BoardGrid({ userBoards, totalPixels, loading = true }) {
               <PixelBoardCard board={board} />
             </Col>
           ))}
+          {
+            userBoards && userBoards.contributions && 
+              <div> Vous n'avez pas de contributions </div>
+          }
         </Row>
       </CardBody>
     </Card>

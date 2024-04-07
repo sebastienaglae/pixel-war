@@ -5,24 +5,27 @@ import { useEffect, useState } from "react";
 import { useApi } from "@hooks/api";
 
 function BoardPage() {
-  const data = {
-    title: "My Board Page",
-    date: "2025-09-01",
-    delay: "5",
-    mode: "no-overwrite",
-    resolution: {
-      x: 10,
-      y: 10,
-    },
-  };
-  const { id } = useParams(); // Access id from URL=
+  const { id } = useParams();
   const [timer, setTimer] = useState("");
-  const { loading } = useApi(`/boards/${id}`);
+  const { loading, data } = useApi(`/boards/${id}`);
   const navigate = useNavigate();
+  const colorTable = [
+    '#FFFFFF',
+    '#000000',
+    '#FF0000',
+    '#00FF00',
+    '#0000FF'
+  ];
 
   const calculateTimeLeft = () => {
     const now = new Date();
-    const distance = new Date(data.date) - now;
+    const distance = new Date(data.startAt) - now;
+
+    if (distance < 0)
+    {
+      setTimer("Terminé !")
+      return;
+    }
 
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor(
@@ -35,13 +38,15 @@ function BoardPage() {
   };
 
   useEffect(() => {
+    if (!data)
+      return;
     calculateTimeLeft();
     const interval = setInterval(() => {
       calculateTimeLeft();
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [data]);
 
   const handleHeatmap = () => {
     navigate(`/board/heatmap/${id}`);
@@ -51,7 +56,7 @@ function BoardPage() {
     <Container className='my-5'>
       <h2 className='text-center mb-5'>
         <Placeholder animation={loading ? null : "wave"}>
-          {data.title}
+          {data && data.name}
         </Placeholder>
       </h2>
       <p className='text-center'>
@@ -61,15 +66,23 @@ function BoardPage() {
       </p>
       <p className='text-center'>
         <Placeholder animation={loading ? null : "wave"}>
-          Le délai est de {data.delay} secondes
+          Le délai est de {data && data.delay} secondes
         </Placeholder>
       </p>
       <p className='text-center'>
         <Placeholder animation={loading ? null : "wave"}>
-          Taille: {data.resolution.x}x{data.resolution.y}
+          Taille: {data && data.resolution.x}x{data && data.resolution.y}
         </Placeholder>
       </p>
-      <PixelBoardComponent id={id} loading={loading} />
+      <p className='text-center'>
+        <Placeholder animation={loading ? null : "wave"}>
+          Regle: {data && data.mode}
+        </Placeholder>
+      </p>
+      {
+        data && 
+      <PixelBoardComponent id={id} colorTable={data.colors} loading={loading} />
+      }
       <Button
         color='primary'
         className='mt-5 d-flex justify-content-center mx-auto'
