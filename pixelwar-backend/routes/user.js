@@ -2,16 +2,30 @@ const express = require('express');
 const router = express.Router();
 
 const UserMdl = require('../models/user');
+const BoardMdl = require('../models/board');
+
 const AuthService = require('../services/auth');
+const mongoose = require("mongoose");
 
 const renderInfo = (id, res) => {
     UserMdl.findById(id)
         .then(user => {
+            // contributions is map with board id as key
+            const contributionBoardIds = Object.keys(user.contributions);
+            const boards = BoardMdl.find({ _id: { $in: contributionBoardIds } });
+            const contributions = boards.map(board => {
+                return {
+                    id: board._id,
+                    name: board.name,
+                    pixels: user.contributions[board._id]
+                };
+            });
+
             res.status(200).json({
                 id: user._id,
                 email: user.email,
                 nickname: user.nickname,
-                contributions: user.contributions
+                contributions: contributions
             });
         })
         .catch(err => {
@@ -23,6 +37,10 @@ router.get('/me', AuthService.RequireJWT, function(req, res, next) {
     renderInfo(req.user.id, res);
 });
 router.get('/:id', function(req, res, next) {
+    if (mongoose.Types.ObjectId.isValid(req.params.id) === false) {
+        res.status(404).json({error: 'User not found'});
+        return;
+    }
     renderInfo(req.params.id, res);
 });
 router.put('/me', AuthService.RequireJWT, function(req, res, next) {
@@ -40,6 +58,10 @@ router.put('/me', AuthService.RequireJWT, function(req, res, next) {
         });
 });
 router.put('/:id', AuthService.RequireJWT, function(req, res, next) {
+    if (mongoose.Types.ObjectId.isValid(req.params.id) === false) {
+        res.status(404).json({error: 'User not found'});
+        return;
+    }
     if (!req.user.admin) {
         return res.status(403).json({error: 'Unauthorized'});
     }
