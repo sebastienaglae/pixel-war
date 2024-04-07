@@ -132,33 +132,15 @@ _Bonus_
 
 ### Membres et Tâches
 
-- [x] Paul ZANAGLIA: PixelBoard
-- [x] Valeriia LAPSHINA: HomePage
-- [x] Ernesto BONNE: Utilisateurs
-- [x] Mike CHIAPPE: Back-end, AWS & Web sockets
-- [x] Sebastien AGLAE: Administrateurs, Visiteurs
+- [x] AGLAE Sebastien: Administrateurs, Visiteurs
+- [x] BONE BRAVO Ernesto: Utilisateurs
+- [x] CHIAPPE Mike: Back-end, AWS & Web sockets
+- [x] LAPSHINA Valeriia: HomePage
+- [x] ZANAGLIA Paul: PixelBoard
 
 ## Commandes
 
 ### Front
-
-#### Installation
-
-```sh
-git clone https://github.com/sebastienaglae/pixel-war.git
-git clone git@github.com:sebastienaglae/pixel-war.git
-cd pixel-war/pixelwar-backend
-npm i
-```
-
-#### Lancement
-
-```sh
-npm run start
-docker-compose up
-```
-
-### Back
 
 #### Installation
 
@@ -176,4 +158,22 @@ npm run dev
 ou
 npm run build
 npm run preview
+```
+
+### Back
+
+#### Installation
+
+```sh
+git clone https://github.com/sebastienaglae/pixel-war.git
+git clone git@github.com:sebastienaglae/pixel-war.git
+cd pixel-war/pixelwar-backend
+npm i
+```
+
+#### Lancement
+
+```sh
+npm run start
+docker-compose up
 ```
