@@ -9,10 +9,12 @@ Le projet est accesible sur [https://pixel-war.atrasis.net](https://pixel-war.at
 Administrateur
 - Nom d'utilisateur: admin
 - Mot de passe: admin
-Utilisateur 1
+  
+Utilisateur 1  
 - Nom d'utilisateur: user1
 - Mot de passe: user1
-Utilisateur 2
+
+Utilisateur 2  
 - Nom d'utilisateur: user2
 - Mot de passe: user2
 
